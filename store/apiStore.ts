@@ -8,7 +8,7 @@ interface ApiState {
 }
 
 export const useApiStore = create<ApiState>((set) => ({
-  baseUrl: 'https://apidev.kykuyo.com',
+  baseUrl: 'http://localhost:3000',
   bearerToken: null,
   setBaseUrl: (url) => set({ baseUrl: url }),
   setBearerToken: (token) => set({ bearerToken: token }),

@@ -4,8 +4,16 @@ import { PortalsWidget } from "@/components/widgets/portals-widget";
 import { MonstersWidget } from "@/components/widgets/monsters-widget";
 import { SkillsWidget } from "@/components/widgets/skills-widget";
 import { SettingsWidget } from "@/components/widgets/settings-widget";
+import { cookies } from "@/node_modules/next/headers";
+import { unauthorized } from "@/node_modules/next/navigation";
 
 export default function DashboardPage() {
+  const token = cookies().get('access_token')?.value
+
+  if (!token) {
+    unauthorized() // returns 401 with minimal response
+  }
+
   return (
     <Layout>
       <div className="min-h-screen">
