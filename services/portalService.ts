@@ -5,7 +5,7 @@ export const portalService = {
   getPortal: (id: string) => {
     return apiHandler<IPortal>({
       method: "GET",
-      path: `/portals/${id}`,
+      path: `/admin/portals/${id}`,
     });
   },
 
@@ -23,7 +23,7 @@ export const portalService = {
 
     return apiHandler<{ data: IPortal[]; count: number }>({
       method: "GET",
-      path: "/portals",
+      path: "/admin/portals",
       params,
     });
   },

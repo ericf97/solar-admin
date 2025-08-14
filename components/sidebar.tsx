@@ -9,6 +9,7 @@ import Image from "next/image";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useState } from "react";
 import { SettingsModal } from "@/components/settings-modal";
+import { useApiStore } from "@/store/apiStore";
 
 const sidebarNavItems = [
   {
@@ -41,6 +42,8 @@ const sidebarNavItems = [
 export function Sidebar() {
   const pathname = usePathname();
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+
+  const email = useApiStore.getState().email
 
   return (
     <div className="flex h-full flex-col bg-background">
@@ -87,7 +90,7 @@ export function Sidebar() {
           </Avatar>
           <div className="flex flex-col min-w-0">
             <span className="text-sm font-medium truncate">
-              {"adaymaster@gmail.com"}
+              {email}
             </span>
             <span className="text-xs text-muted-foreground">Admin</span>
           </div>

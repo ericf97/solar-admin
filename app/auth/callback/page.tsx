@@ -56,10 +56,11 @@ export default function AuthCallback() {
           return;
         }
 
-        const store = useApiStore.getState()
-        store.setBearerToken(accessToken)
+        const store = useApiStore.getState();
+        store.setBearerToken(accessToken);
 
-        await authService.loginAdmin();
+        const userLogin = await authService.loginAdmin();
+        store.setEmail(userLogin.email);
 
         const expires = new Date(Date.now() + 60 * 60 * 1000).toUTCString()
         document.cookie = `access_token=${accessToken}; path=/; expires=${expires}; samesite=strict`
@@ -76,5 +77,5 @@ export default function AuthCallback() {
 
   }, [router])
 
-  return <p>Procesando login...</p>
+  return <p>processing login...</p>
 }

@@ -3,5 +3,9 @@ export enum EEnergyType {
   VITA = "vita",
   FIRE = "fire",
   BIO = "bio",
+  AIR = 'air',
+  HEART = 'heart',
+  MIND = 'mind',
+  SAND = 'sand',
 }
 
