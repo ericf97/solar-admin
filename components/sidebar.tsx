@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useState } from "react";
 import { SettingsModal } from "@/components/settings-modal";
 import { useApiStore } from "@/store/apiStore";
+import { useRouter } from "@/node_modules/next/navigation";
 
 const sidebarNavItems = [
   {
@@ -43,7 +44,17 @@ export function Sidebar() {
   const pathname = usePathname();
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
-  const email = useApiStore.getState().email
+  const email = useApiStore.getState().email;
+  const store = useApiStore.getState();
+  const router = useRouter();
+
+  const handleLogout = () => {
+
+    store.setBearerToken(null);
+    store.setEmail("");
+
+    router.push("/auth");
+  };
 
   return (
     <div className="flex h-full flex-col bg-background">
@@ -95,6 +106,9 @@ export function Sidebar() {
             <span className="text-xs text-muted-foreground">Admin</span>
           </div>
         </div>
+        <div className="flex flex-col min-w-0">
+          <Button variant="outline" onClick={handleLogout}>Logout</Button>
+        </div>
         <SettingsModal
           isOpen={isSettingsModalOpen}
           onClose={() => setIsSettingsModalOpen(false)}
@@ -103,4 +117,3 @@ export function Sidebar() {
     </div>
   );
 }
-

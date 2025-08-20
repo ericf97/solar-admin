@@ -6,13 +6,9 @@ import { SkillsWidget } from "@/components/widgets/skills-widget";
 import { SettingsWidget } from "@/components/widgets/settings-widget";
 import { cookies } from "@/node_modules/next/headers";
 import { unauthorized } from "@/node_modules/next/navigation";
+import { useApiStore } from "@/store/apiStore";
 
-export default function DashboardPage() {
-  const token = cookies().get('access_token')?.value
-
-  if (!token) {
-    unauthorized() // returns 401 with minimal response
-  }
+export default async function DashboardPage() {
 
   return (
     <Layout>

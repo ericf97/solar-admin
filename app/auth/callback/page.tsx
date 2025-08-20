@@ -51,22 +51,16 @@ export default function AuthCallback() {
         const { idToken: accessToken } = await getTokenFirebase(tokenGoogle);
 
         if (!accessToken) {
-          console.warn("getTokenFirebase did not return idToken");
           router.push("/login?error=unauthorized");
           return;
         }
 
         const store = useApiStore.getState();
         store.setBearerToken(accessToken);
-
         const userLogin = await authService.loginAdmin();
         store.setEmail(userLogin.email);
 
-        const expires = new Date(Date.now() + 60 * 60 * 1000).toUTCString()
-        document.cookie = `access_token=${accessToken}; path=/; expires=${expires}; samesite=strict`
-
-        // 4. Redirigir al home
-        router.push("/")
+        router.push('/')
       } catch (err) {
         console.error("Login error:", err)
         router.push('/unauthorized')

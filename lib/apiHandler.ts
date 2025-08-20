@@ -1,5 +1,7 @@
-import { unauthorized } from "@/node_modules/next/navigation";
+import { cookies } from "@/node_modules/next/headers";
+import { unauthorized, useRouter } from "@/node_modules/next/navigation";
 import { useApiStore } from "../store/apiStore";
+import { NextResponse } from "next/server";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -43,7 +45,7 @@ export async function apiHandler<T>({
   const response = await fetch(url.toString(), options);
 
   if(response.status === 401) {
-    return unauthorized();
+    window.location.href = '/unauthorized';
   }
 
   if (!response.ok) {
@@ -52,4 +54,3 @@ export async function apiHandler<T>({
 
   return response.json();
 }
-

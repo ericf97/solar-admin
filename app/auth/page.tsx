@@ -34,7 +34,7 @@ export default function LoginPage() {
       <main className="flex flex-1 items-center justify-center p-4 md:p-6">
             <Card>
               <CardHeader>
-                <CardTitle>Solar Login</CardTitle>
+                <CardTitle>SolAr Login</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <Button id="loginButton" onClick={handleLogin}>
