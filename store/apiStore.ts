@@ -10,12 +10,17 @@ interface ApiState {
   setEmail: (email: string | null) => void
 }
 
-export const useApiStore = create<ApiState>(persist((set) => ({
-  baseUrl: 'https://apidev.kykuyo.com',
-  bearerToken: null,
-  email: null,
-  setBaseUrl: (url: string) => set({ baseUrl: url }),
-  setBearerToken: (token: string) => set({ bearerToken: token }),
-  setEmail: (email: string) => set({ email }),
-})))
-
+export const useApiStore = create<ApiState>()(
+  persist(
+    (set) => ({
+      baseUrl: 'https://apidev.kykuyo.com',
+      bearerToken: null,
+      email: null,
+      setBaseUrl: (url: string) => set({ baseUrl: url }),
+      setBearerToken: (token: string | null) => set({ bearerToken: token }),
+      setEmail: (email: string | null) => set({ email }),
+    }),
+    {
+      name: 'local-storage'
+    }
+))

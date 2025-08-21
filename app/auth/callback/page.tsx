@@ -4,8 +4,8 @@ import { useRouter, } from "next/navigation";
 import { useApiStore } from "../../../store/apiStore";
 import { authService } from "@/services/authService";
 
-const FIREBASE_API_KEY = 'AIzaSyD_S-ITsmf2PfxuSVnrPuw225pY8vvYuZc';
-const REDIRECT_URI = "http://localhost:8080/auth/callback";
+const FIREBASE_API_KEY = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+const REDIRECT_URI = process.env.NEXT_PUBLIC_REDIRECT_URI;
 
 export default function AuthCallback() {
   const router = useRouter()
@@ -27,7 +27,7 @@ export default function AuthCallback() {
         body: JSON.stringify(payload),
       });
       const data = await response.json();
-      if (!response.ok) return res.status(500).json({ error: data.error });
+      if (!response.ok) return ({ error: data.error });
       return data;
     } catch (err) {
       console.error(err)

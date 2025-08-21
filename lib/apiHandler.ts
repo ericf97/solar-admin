@@ -1,7 +1,4 @@
-import { cookies } from "@/node_modules/next/headers";
-import { unauthorized, useRouter } from "@/node_modules/next/navigation";
 import { useApiStore } from "../store/apiStore";
-import { NextResponse } from "next/server";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 

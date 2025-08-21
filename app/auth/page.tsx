@@ -3,28 +3,28 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-const CLIENT_ID = "924091546615-di9rugo11f1o4mogj6aal5j67c02e0l5.apps.googleusercontent.com";
-const REDIRECT_URI = "http://localhost:8080/auth/callback";
-const SCOPE = "profile email openid";
+const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID;
+const REDIRECT_URI = process.env.NEXT_PUBLIC_REDIRECT_URI;
+const SCOPE = process.env.NEXT_PUBLIC_SCOPE;
 
 export default function LoginPage() {
 
+  console.log(REDIRECT_URI)
   const handleLogin = () => {
     const oauthUrl =
       "https://accounts.google.com/o/oauth2/v2/auth" +
       "?response_type=token" +
       "&client_id=" +
-      encodeURIComponent(CLIENT_ID) +
+      encodeURIComponent(CLIENT_ID!) +
       "&redirect_uri=" +
-      encodeURIComponent(REDIRECT_URI) +
+      encodeURIComponent(REDIRECT_URI!) +
       "&scope=" +
-      encodeURIComponent(SCOPE);
+      encodeURIComponent(SCOPE!);
   
     window.location.href = oauthUrl
   }

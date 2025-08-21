@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormField, FormItem, FormControl } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -35,6 +35,7 @@ import { PortalFormData } from "./portal-form";
 
 interface PortalMediaFormProps {
   control: Control<PortalFormData>;
+  cardImage?: boolean
 }
 
 const SortableItem = ({
@@ -71,7 +72,7 @@ const SortableItem = ({
   );
 };
 
-export function PortalMediaForm({ control }: PortalMediaFormProps) {
+export function PortalMediaForm({ control, cardImage = false }: PortalMediaFormProps) {
   const { fields, append, remove, move } = useFieldArray({
     control,
     name: "items",
@@ -116,6 +117,9 @@ export function PortalMediaForm({ control }: PortalMediaFormProps) {
 
   return (
     <Card className="bg-card">
+      <CardHeader>
+        <CardTitle>{cardImage ? 'Card Image' : 'Items'}</CardTitle>
+      </CardHeader>
       <CardContent className="space-y-4 p-6">
         <DndContext
           sensors={sensors}
@@ -242,14 +246,16 @@ export function PortalMediaForm({ control }: PortalMediaFormProps) {
           </SortableContext>
         </DndContext>
 
-        <Button
+        { !cardImage && (
+          <Button
           type="button"
           variant="outline"
           onClick={() => append({ url: "", image: "" })}
           className="mt-4 bg-background hover:bg-accent"
-        >
+          >
           Add Item
         </Button>
+          )}
       </CardContent>
 
       <ImageCropModal

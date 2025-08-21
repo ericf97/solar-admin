@@ -429,6 +429,7 @@ export function PortalForm({
               </CardContent>
             </Card>
 
+            {/* <PortalMediaForm cardImage={true} control={form.control} /> */}
             <PortalMediaForm control={form.control} />
           </div>
         </div>
