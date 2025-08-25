@@ -3,9 +3,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { PortalForm } from "./portal-form"
 import { PortalFormProps } from "@/types/portal"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
+import { Tabs, TabsList, TabsTrigger } from "./ui/tabs"
 import { useForm } from "react-hook-form"
-import { Alert, AlertDescription, AlertTitle } from "./ui/alert"
 
 export function ViewForm({
   initialData,
@@ -30,7 +29,7 @@ export function ViewForm({
   }
 
   return (
-    <Tabs value={viewMode} onValueChange={v => setViewMode(v as any)} className="w-full">
+    <Tabs value={viewMode} onValueChange={v => setViewMode(v as "form" | "json")} className="w-full">
       <TabsList>
         <TabsTrigger value="form">Form View</TabsTrigger>
         <TabsTrigger value="json">JSON View</TabsTrigger>

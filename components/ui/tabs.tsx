@@ -1,6 +1,11 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
+type TabsChildProps = {
+  current?: string
+  onChange?: (val: string) => void
+}
+
 const Tabs = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & {
@@ -19,7 +24,7 @@ const Tabs = React.forwardRef<
     <div ref={ref} className={cn("w-full", className)} {...props}>
       {React.Children.map(children, child => {
         if (!React.isValidElement(child)) return child
-        return React.cloneElement(child, {
+        return React.cloneElement(child as React.ReactElement<TabsChildProps>, {
           current,
           onChange: handleChange,
         })
@@ -44,7 +49,7 @@ const TabsList = React.forwardRef<
   >
     {React.Children.map(children, child => {
       if (!React.isValidElement(child)) return child
-      return React.cloneElement(child, { current, onChange })
+      return React.cloneElement(child as React.ReactElement<TabsChildProps>, { current, onChange })
     })}
   </div>
 ))
@@ -80,20 +85,4 @@ const TabsTrigger = React.forwardRef<
 })
 TabsTrigger.displayName = "TabsTrigger"
 
-const TabsContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & { value: string; activeValue?: string }
->(({ className, value, activeValue, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "mt-2",
-      value === activeValue ? "block" : "hidden",
-      className
-    )}
-    {...props}
-  />
-))
-TabsContent.displayName = "TabsContent"
-
-export { Tabs, TabsList, TabsTrigger, TabsContent }
+export { Tabs, TabsList, TabsTrigger }

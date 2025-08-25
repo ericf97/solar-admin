@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { PortalForm } from "@/components/portal-form";
 import { IPortal } from "@/types/portal";
 import { Layout } from "@/components/layout";
 import {
@@ -17,9 +16,6 @@ import { portalService } from "@/services/portalService";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { ViewForm } from "@/components/view-form";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 
 export default function EditPortalPage() {
   const params = useParams() as { id: string };
@@ -27,7 +23,6 @@ export default function EditPortalPage() {
   const [portal, setPortal] = useState<IPortal | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"form" | "json">("form");
   const router = useRouter();
 
   useEffect(() => {

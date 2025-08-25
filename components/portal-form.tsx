@@ -33,12 +33,11 @@ import {
 } from "@/components/ui/card";
 import { EnergyBadge } from "@/components/energy-badge";
 import dynamic from "next/dynamic";
-import { IPortal, PortalFormProps } from "@/types/portal";
+import { PortalFormProps } from "@/types/portal";
 import { EEnergyType } from "@/types/energy";
 import { EPortalType } from "@/types/portal";
 import { SliderInput } from "./slider-input";
 import { PortalMediaForm } from "./portal-media-form";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
 const MapWithNoSSR = dynamic(() => import("@/components/map"), {
   ssr: false,
@@ -95,7 +94,6 @@ export function PortalForm({
 }: PortalFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showMap, setShowMap] = useState(false);
-  const [viewMode, setViewMode] = useState<"form" | "json">("form");
 
   const form = useForm<PortalFormData>({
     resolver: zodResolver(portalSchema),
