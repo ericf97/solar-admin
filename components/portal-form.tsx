@@ -33,11 +33,12 @@ import {
 } from "@/components/ui/card";
 import { EnergyBadge } from "@/components/energy-badge";
 import dynamic from "next/dynamic";
-import { IPortal } from "@/types/portal";
+import { IPortal, PortalFormProps } from "@/types/portal";
 import { EEnergyType } from "@/types/energy";
 import { EPortalType } from "@/types/portal";
 import { SliderInput } from "./slider-input";
 import { PortalMediaForm } from "./portal-media-form";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
 const MapWithNoSSR = dynamic(() => import("@/components/map"), {
   ssr: false,
@@ -73,12 +74,6 @@ const portalSchema = z.object({
 
 export type PortalFormData = z.infer<typeof portalSchema>;
 
-interface PortalFormProps {
-  initialData?: IPortal;
-  onSubmit: (data: PortalFormData) => Promise<void>;
-  onCancel: () => void;
-}
-
 const removeEmptyValues = (obj: unknown): unknown => {
   if (Array.isArray(obj)) {
     return obj.map(removeEmptyValues).filter(v => v != null);
@@ -100,6 +95,7 @@ export function PortalForm({
 }: PortalFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showMap, setShowMap] = useState(false);
+  const [viewMode, setViewMode] = useState<"form" | "json">("form");
 
   const form = useForm<PortalFormData>({
     resolver: zodResolver(portalSchema),

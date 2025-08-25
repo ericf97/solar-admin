@@ -16,6 +16,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { portalService } from "@/services/portalService";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { ViewForm } from "@/components/view-form";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function EditPortalPage() {
   const params = useParams() as { id: string };
@@ -23,6 +27,7 @@ export default function EditPortalPage() {
   const [portal, setPortal] = useState<IPortal | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<"form" | "json">("form");
   const router = useRouter();
 
   useEffect(() => {
@@ -77,11 +82,11 @@ export default function EditPortalPage() {
                 <Skeleton className="h-4 w-1/2" />
               </div>
             ) : portal ? (
-              <PortalForm
+              <ViewForm 
                 initialData={portal}
                 onSubmit={handleSubmit}
                 onCancel={() => router.push("/portals")}
-              />
+                />
             ) : (
               <p className="text-center text-lg text-muted-foreground">
                 Portal not found
