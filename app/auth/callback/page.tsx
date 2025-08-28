@@ -62,8 +62,8 @@ export default function AuthCallback() {
 
         router.push('/')
       } catch (err) {
-        console.error("Login error:", err)
-        router.push('/unauthorized')
+        console.error("Login error:", err);
+        router.push('/unauthorized');
       }
     }
     processLogin()

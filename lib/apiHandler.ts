@@ -43,6 +43,7 @@ export async function apiHandler<T>({
 
   if(response.status === 401) {
     window.location.href = '/unauthorized';
+    sessionStorage.setItem('bearer', bearerToken as string);
   }
 
   if (!response.ok) {
