@@ -50,7 +50,7 @@ export function EnergyBadge({ type }: EnergyBadgeProps) {
       className={`${config?.color} inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5`}
     >
       <Image
-        src={config.icon}
+        src={config?.icon}
         alt={`${normalizedType} energy type`}
         width={12}
         height={12}

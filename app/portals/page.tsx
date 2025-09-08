@@ -11,7 +11,7 @@ import { Layout } from "@/components/layout";
 import { PortalModal } from "@/components/portal-modal";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Plus, MapPin, Table } from "lucide-react";
+import { Plus, MapPin, Table, Upload } from "lucide-react";
 import { portalService } from "@/services/portalService";
 import { PortalSearch, SearchFilters } from "@/components/portal-search";
 import { EEnergyType } from "@/types/energy";
@@ -206,6 +206,11 @@ export default function PortalsPage() {
                   <Plus className="h-6 w-6" />
                 </Button>
               </Link>
+              <Link href="/portals/bulk-add" passHref>
+              <Button variant="outline" size="icon" title="Upload CSV for bulk portals">
+                <Upload className="h-6 w-6" /> {/* Replace with your preferred icon */}
+              </Button>
+            </Link>
             </div>
           </div>
         </div>

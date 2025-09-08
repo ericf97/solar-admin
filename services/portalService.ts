@@ -61,5 +61,12 @@ export const portalService = {
       params,
     });
   },
-};
 
+  bulkUploadPortals: (data: IPortal[]) => {
+    return apiHandler({
+      method: "POST",
+      path: "/admin/portals/bulk",
+      data,
+    });
+  }
+};
