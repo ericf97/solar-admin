@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/card";
 import { EnergyBadge } from "@/components/energy-badge";
 import dynamic from "next/dynamic";
-import { IPortal } from "@/types/portal";
+import { PortalFormProps } from "@/types/portal";
 import { EEnergyType } from "@/types/energy";
 import { EPortalType } from "@/types/portal";
 import { SliderInput } from "./slider-input";
@@ -72,12 +72,6 @@ const portalSchema = z.object({
 });
 
 export type PortalFormData = z.infer<typeof portalSchema>;
-
-interface PortalFormProps {
-  initialData?: IPortal;
-  onSubmit: (data: PortalFormData) => Promise<void>;
-  onCancel: () => void;
-}
 
 const removeEmptyValues = (obj: unknown): unknown => {
   if (Array.isArray(obj)) {
@@ -429,6 +423,7 @@ export function PortalForm({
               </CardContent>
             </Card>
 
+            <PortalMediaForm cardImage={true} control={form.control} />
             <PortalMediaForm control={form.control} />
           </div>
         </div>
@@ -449,4 +444,3 @@ export function PortalForm({
     </Form>
   );
 }
-

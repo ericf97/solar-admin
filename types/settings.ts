@@ -14,9 +14,8 @@ export interface IPortals {
 }
 
 export interface IRifts {
-  maxRiftCount: number;
-  spawnRadius: number;
-  minDistanceToGenerate: number;
+  amountPerTile: number;
+  expirationTime: number;
 }
 
 export interface ISkillsBase {

@@ -32,7 +32,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const [environment, setEnvironment] = useState<"local" | "dev" | "prod">(
     "dev"
   );
-  const [localUrl, setLocalUrl] = useState("http://localhost:8080");
+  const [localUrl, setLocalUrl] = useState("http://localhost:3000");
 
   useEffect(() => {
     const storedEnv = localStorage.getItem("environment");

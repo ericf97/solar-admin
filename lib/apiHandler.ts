@@ -41,10 +41,14 @@ export async function apiHandler<T>({
 
   const response = await fetch(url.toString(), options);
 
+  if(response.status === 401) {
+    window.location.href = '/unauthorized';
+    sessionStorage.setItem('bearer', bearerToken as string);
+  }
+
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
   return response.json();
 }
-

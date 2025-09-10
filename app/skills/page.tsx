@@ -83,13 +83,17 @@ export default function SkillsPage() {
         const response = await skillService.getSkills();
         if (response.data) {
           const sortedSkills = [...response.data].sort((a, b) => {
-            const energyOrder = {
+            const energyOrder: Record<EEnergyType, number> = {
               [EEnergyType.WATER]: 0,
               [EEnergyType.VITA]: 1,
               [EEnergyType.FIRE]: 2,
               [EEnergyType.BIO]: 3,
+              [EEnergyType.AIR]: 4,
+              [EEnergyType.HEART]: 5,
+              [EEnergyType.MIND]: 6,
+              [EEnergyType.SAND]: 7,
             };
-            return energyOrder[a.energy] - energyOrder[b.energy];
+            return energyOrder[a.energy as EEnergyType] - energyOrder[b.energy as EEnergyType];
           });
           setSkills(sortedSkills);
         }

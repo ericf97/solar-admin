@@ -11,6 +11,7 @@ import { PortalModal } from "@/components/portal-modal";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
 import { portalService } from "@/services/portalService";
+import { DefaultImages } from "@/lib/defaultImages";
 
 export function PortalsWidget() {
   const [portals, setPortals] = useState<IPortal[]>([]);
@@ -75,7 +76,7 @@ export function PortalsWidget() {
             <CardContent className="p-4">
               <div className="flex items-center space-x-4">
                 <Avatar className="h-12 w-12 border">
-                  <AvatarImage src={portal.cardImage} alt={portal.name} />
+                  <AvatarImage src={portal.cardImage || DefaultImages[portal.portalType]} alt={portal.name} />
                   <AvatarFallback>
                     {portal.name.slice(0, 2).toUpperCase()}
                   </AvatarFallback>

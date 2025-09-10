@@ -9,7 +9,8 @@ export default function AddPortalPage() {
 
   const handleSubmit = async () => {
     try {
-      //await createPortal(data)
+      // console.log(formData);
+      // await portalService.createPortal(formData);
       router.push("/");
     } catch (error) {
       console.error("Error creating portal:", error);

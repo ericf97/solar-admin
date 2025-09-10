@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { PortalForm } from "@/components/portal-form";
 import { IPortal } from "@/types/portal";
 import { Layout } from "@/components/layout";
 import {
@@ -16,6 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { portalService } from "@/services/portalService";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { ViewForm } from "@/components/view-form";
 
 export default function EditPortalPage() {
   const params = useParams() as { id: string };
@@ -77,11 +77,11 @@ export default function EditPortalPage() {
                 <Skeleton className="h-4 w-1/2" />
               </div>
             ) : portal ? (
-              <PortalForm
+              <ViewForm 
                 initialData={portal}
                 onSubmit={handleSubmit}
                 onCancel={() => router.push("/portals")}
-              />
+                />
             ) : (
               <p className="text-center text-lg text-muted-foreground">
                 Portal not found
