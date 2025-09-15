@@ -28,7 +28,7 @@ const energyTypeConfig: Record<EEnergyType, { color: string; icon: string }> = {
     icon: "/icons/air.png",
   },
   heart: {
-    color: "bg-orange-500/10 text-orange-500 dark:bg-orange-500/20",
+    color: "bg-yellow-500/10 text-yellow-500 dark:bg-yellow-500/20",
     icon: "/icons/heart.png",
   },
   mind: {

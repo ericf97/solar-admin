@@ -9,6 +9,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuCheckboxItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { X, Search } from "lucide-react";
 import { EnergyBadge } from "@/components/energy-badge";
 import { useDebouncedCallback } from "use-debounce";
@@ -23,7 +30,10 @@ export interface SearchFilters {
   shippingCode?: string;
   portalType?: string | null;
   energyType?: string | null;
+  state?: string[];
 }
+
+const portalStates = ["draft", "staged", "published", "archived"] as const;
 
 interface PortalSearchProps {
   onSearch: (filters: SearchFilters) => void;
@@ -35,16 +45,34 @@ const energyTypes = Object.values(EEnergyType);
 export function PortalSearch({ onSearch }: PortalSearchProps) {
   const [filters, setFilters] = useState<SearchFilters>({});
   const [hasActiveFilters, setHasActiveFilters] = useState(false);
+  const [selectedStates, setSelectedStates] = useState<string[]>([
+    ...portalStates, // all selected initially
+  ]);
+
+  const toggleState = (state: string) => {
+    setSelectedStates(prev =>
+      prev.includes(state)
+        ? prev.filter(s => s !== state) // remove
+        : [...prev, state] // add
+    );
+  };
 
   useEffect(() => {
     setHasActiveFilters(
-      !!filters.searchTerm || !!filters.energyType || !!filters.portalType
+      !!filters.searchTerm || !!filters.energyType || !!filters.portalType ||
+      !!(filters.state && filters.state.length < portalStates.length)
     );
   }, [filters]);
 
   const debouncedSearch = useDebouncedCallback((newFilters: SearchFilters) => {
     onSearch(newFilters);
   }, 300);
+
+  useEffect(() => {
+    const newFilters = { ...filters, state: selectedStates };
+    setFilters(newFilters);
+    debouncedSearch(newFilters);
+  }, [selectedStates]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFilters = { ...filters, searchTerm: e.target.value };
@@ -59,6 +87,7 @@ export function PortalSearch({ onSearch }: PortalSearchProps) {
   };
 
   const clearFilters = () => {
+    setFilters({ state: [...portalStates] })
     setFilters({});
     onSearch({});
   };
@@ -107,6 +136,24 @@ export function PortalSearch({ onSearch }: PortalSearchProps) {
             ))}
           </SelectContent>
         </Select>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="w-[160px] justify-between">
+              Filter State
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-[200px]">
+            {portalStates.map(state => (
+              <DropdownMenuCheckboxItem
+                key={state}
+                checked={selectedStates.includes(state)}
+                onCheckedChange={() => toggleState(state)}
+              >
+                {state}
+              </DropdownMenuCheckboxItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
         {hasActiveFilters && (
           <button
             onClick={clearFilters}

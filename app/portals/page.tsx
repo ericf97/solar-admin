@@ -16,6 +16,7 @@ import { portalService } from "@/services/portalService";
 import { PortalSearch, SearchFilters } from "@/components/portal-search";
 import { EEnergyType } from "@/types/energy";
 import { DefaultImages } from "@/lib/defaultImages";
+import { isArray } from "util";
 
 const columns: ColumnDef<IPortal>[] = [
   {
@@ -120,6 +121,7 @@ export default function PortalsPage() {
     setIsLoading(true);
     try {
       const filter = createFilterString(searchFilters);
+      console.log(filter)
       const response = await portalService.getPortals(
         filter,
         "name",
@@ -153,6 +155,7 @@ export default function PortalsPage() {
       searchTerm?: string;
       portalType?: string | null;
       energyType?: string | null;
+      state?: string[]
     } = {};
     if (filters.searchTerm) {
       const searchTerms = [
@@ -168,6 +171,9 @@ export default function PortalsPage() {
     }
     if (filters.energyType) {
       processedFilters.energyType = filters.energyType;
+    }
+    if (filters.state && filters.state.length) {
+      processedFilters.state = filters.state
     }
     setSearchFilters(processedFilters);
     setPagination(prev => ({ ...prev, pageIndex: 0 }));
@@ -249,6 +255,13 @@ function createFilterString(filters: SearchFilters): string {
     filterParts.push(`portalType eq '${filters.portalType}'`);
   if (filters.energyType)
     filterParts.push(`energyType eq '${filters.energyType}'`);
+
+  if (filters.state && filters.state.length > 0) {
+    const stateFilter = `(${filters.state
+      .map(s => `state eq '${s}'`)
+      .join(" or ")})`;
+    filterParts.push(stateFilter);
+  }
   return filterParts.join(" and ");
 }
 
