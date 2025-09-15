@@ -4,14 +4,14 @@ import { useRouter } from "next/navigation";
 import { PortalForm, PortalFormData } from "@/components/portal-form";
 import { Layout } from "@/components/layout";
 import { portalService } from "@/services/portalService";
+import { IPortal } from "@/types/portal";
 
 export default function AddPortalPage() {
   const router = useRouter();
 
-  const handleSubmit = async (formData: PortalFormData) => {
+  const handleSubmit = async (formData: Partial<IPortal>) => {
     try {
-      // console.log(formData);
-      await portalService.createPortal(formData);
+      await portalService.createPortal(formData as IPortal);
       router.push("/");
     } catch (error) {
       console.error("Error creating portal:", error);
