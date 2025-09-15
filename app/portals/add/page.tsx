@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { PortalForm, PortalFormData } from "@/components/portal-form";
+import { PortalForm } from "@/components/portal-form";
 import { Layout } from "@/components/layout";
 import { portalService } from "@/services/portalService";
 import { IPortal } from "@/types/portal";

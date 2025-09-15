@@ -16,7 +16,6 @@ import { portalService } from "@/services/portalService";
 import { PortalSearch, SearchFilters } from "@/components/portal-search";
 import { EEnergyType } from "@/types/energy";
 import { DefaultImages } from "@/lib/defaultImages";
-import { isArray } from "util";
 
 const columns: ColumnDef<IPortal>[] = [
   {
