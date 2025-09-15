@@ -4,29 +4,49 @@ import L from "leaflet";
 
 const energyIcons = {
   water: L.icon({
-    iconUrl:
-      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/water-Ev8745S1qZ6EdeluMuXjDfot62vhjb.png",
+    iconUrl: '/icons/water.png',
     iconSize: [32, 32],
     iconAnchor: [16, 32],
     popupAnchor: [0, -32],
   }),
   bio: L.icon({
-    iconUrl:
-      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/bio-JIRpskV7R25vVa8IWL1fDyGLkvR2ig.png",
+    iconUrl: '/icons/bio.png',
     iconSize: [32, 32],
     iconAnchor: [16, 32],
     popupAnchor: [0, -32],
   }),
   fire: L.icon({
-    iconUrl:
-      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/fire-90xJjcxXSqwqxr6MW2UuXpCpIsURFT.png",
+    iconUrl: '/icons/fire.png',
     iconSize: [32, 32],
     iconAnchor: [16, 32],
     popupAnchor: [0, -32],
   }),
   vita: L.icon({
-    iconUrl:
-      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/vita-FjYWVQ9SNU9cigFgzjhGjLKpGGzif6.png",
+    iconUrl: '/icons/vita.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
+  }),
+  air: L.icon({
+    iconUrl:'/icons/air.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
+  }),
+  heart: L.icon({
+    iconUrl: '/icons/heart.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
+  }),
+  mind: L.icon({
+    iconUrl: '/icons/mind.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
+  }),
+  sand: L.icon({
+    iconUrl: '/icons/sand.png',
     iconSize: [32, 32],
     iconAnchor: [16, 32],
     popupAnchor: [0, -32],

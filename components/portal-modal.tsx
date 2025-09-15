@@ -17,6 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { portalService } from "@/services/portalService";
+import { DefaultImages, DefaultItemImages } from "@/lib/defaultImages";
 
 const MapWithNoSSR = dynamic(() => import("@/components/map"), {
   ssr: false,
@@ -40,7 +41,16 @@ export function PortalModal({ portalId, isOpen, onClose }: PortalModalProps) {
         setIsLoading(true);
         try {
           const data = await portalService.getPortal(portalId);
-          setPortal(data);
+
+          const replaceDefault: IPortal = {
+            ...data,
+            cardImage: data.cardImage || DefaultImages[data.portalType] || '',
+            items:
+              data.items && data.items.length > 0
+                ? data.items
+                : DefaultItemImages[data.portalType] || [],
+          }
+          setPortal(replaceDefault);
         } catch (error) {
           console.error("Error loading portal:", error);
         } finally {
@@ -116,7 +126,7 @@ export function PortalModal({ portalId, isOpen, onClose }: PortalModalProps) {
                   <Skeleton className="w-full h-full" />
                 ) : (
                   <Image
-                    src={portal.cardImage}
+                    src={portal.cardImage || DefaultImages[portal.portalType] || ''}
                     alt={portal.name}
                     fill
                     className="object-cover"
@@ -222,4 +232,3 @@ export function PortalModal({ portalId, isOpen, onClose }: PortalModalProps) {
     </Dialog>
   );
 }
-

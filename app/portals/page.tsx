@@ -11,21 +11,22 @@ import { Layout } from "@/components/layout";
 import { PortalModal } from "@/components/portal-modal";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Plus, MapPin, Table } from "lucide-react";
+import { Plus, MapPin, Table, Upload } from "lucide-react";
 import { portalService } from "@/services/portalService";
 import { PortalSearch, SearchFilters } from "@/components/portal-search";
-
 import { EEnergyType } from "@/types/energy";
+import { DefaultImages } from "@/lib/defaultImages";
+import { isArray } from "util";
 
 const columns: ColumnDef<IPortal>[] = [
   {
     id: "avatar",
     header: "",
     cell: ({ row }) => {
-      const portal = row.original;
+      const portal: IPortal = row.original;
       return (
         <Avatar>
-          <AvatarImage src={portal.cardImage} alt={portal.name} />
+          <AvatarImage src={portal.cardImage || DefaultImages[portal.portalType]} alt={portal.name} />
           <AvatarFallback>
             {portal.name.slice(0, 2).toUpperCase()}
           </AvatarFallback>
@@ -120,6 +121,7 @@ export default function PortalsPage() {
     setIsLoading(true);
     try {
       const filter = createFilterString(searchFilters);
+      console.log(filter)
       const response = await portalService.getPortals(
         filter,
         "name",
@@ -153,6 +155,7 @@ export default function PortalsPage() {
       searchTerm?: string;
       portalType?: string | null;
       energyType?: string | null;
+      state?: string[]
     } = {};
     if (filters.searchTerm) {
       const searchTerms = [
@@ -168,6 +171,9 @@ export default function PortalsPage() {
     }
     if (filters.energyType) {
       processedFilters.energyType = filters.energyType;
+    }
+    if (filters.state && filters.state.length) {
+      processedFilters.state = filters.state
     }
     setSearchFilters(processedFilters);
     setPagination(prev => ({ ...prev, pageIndex: 0 }));
@@ -206,6 +212,11 @@ export default function PortalsPage() {
                   <Plus className="h-6 w-6" />
                 </Button>
               </Link>
+              <Link href="/portals/bulk-add" passHref>
+              <Button variant="outline" size="icon" title="Upload CSV for bulk portals">
+                <Upload className="h-6 w-6" /> {/* Replace with your preferred icon */}
+              </Button>
+            </Link>
             </div>
           </div>
         </div>
@@ -244,6 +255,13 @@ function createFilterString(filters: SearchFilters): string {
     filterParts.push(`portalType eq '${filters.portalType}'`);
   if (filters.energyType)
     filterParts.push(`energyType eq '${filters.energyType}'`);
+
+  if (filters.state && filters.state.length > 0) {
+    const stateFilter = `(${filters.state
+      .map(s => `state eq '${s}'`)
+      .join(" or ")})`;
+    filterParts.push(stateFilter);
+  }
   return filterParts.join(" and ");
 }
 

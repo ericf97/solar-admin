@@ -5,7 +5,7 @@ export const portalService = {
   getPortal: (id: string) => {
     return apiHandler<IPortal>({
       method: "GET",
-      path: `/portals/${id}`,
+      path: `/admin/portals/${id}`,
     });
   },
 
@@ -23,7 +23,7 @@ export const portalService = {
 
     return apiHandler<{ data: IPortal[]; count: number }>({
       method: "GET",
-      path: "/portals",
+      path: "/admin/portals",
       params,
     });
   },
@@ -31,7 +31,7 @@ export const portalService = {
   updatePortal: (id: string, data: Partial<IPortal>) => {
     return apiHandler<IPortal>({
       method: "PATCH",
-      path: `/portals/${id}`,
+      path: `/admin/portals/${id}`,
       data,
     });
   },
@@ -39,7 +39,7 @@ export const portalService = {
   createPortal: (data: Omit<IPortal, "id">) => {
     return apiHandler<IPortal>({
       method: "POST",
-      path: "/portals",
+      path: "/admin/portals",
       data,
     });
   },
@@ -57,9 +57,16 @@ export const portalService = {
 
     return apiHandler<{ data: IPortal[]; count: number }>({
       method: "GET",
-      path: "/portals",
+      path: "/admin/portals",
       params,
     });
   },
-};
 
+  bulkUploadPortals: (data: IPortal[]) => {
+    return apiHandler({
+      method: "POST",
+      path: "/admin/portals/bulk",
+      data,
+    });
+  }
+};

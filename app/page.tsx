@@ -5,7 +5,8 @@ import { MonstersWidget } from "@/components/widgets/monsters-widget";
 import { SkillsWidget } from "@/components/widgets/skills-widget";
 import { SettingsWidget } from "@/components/widgets/settings-widget";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+
   return (
     <Layout>
       <div className="min-h-screen">

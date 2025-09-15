@@ -1,15 +1,17 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { PortalForm } from "@/components/portal-form";
+import { PortalForm, PortalFormData } from "@/components/portal-form";
 import { Layout } from "@/components/layout";
+import { portalService } from "@/services/portalService";
 
 export default function AddPortalPage() {
   const router = useRouter();
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (formData: PortalFormData) => {
     try {
-      //await createPortal(data)
+      // console.log(formData);
+      await portalService.createPortal(formData);
       router.push("/");
     } catch (error) {
       console.error("Error creating portal:", error);

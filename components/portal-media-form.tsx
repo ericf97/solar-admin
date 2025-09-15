@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormField, FormItem, FormControl } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,7 +13,7 @@ import {
 import { ImageCropModal } from "@/components/image-crop-modal";
 import Image from "next/image";
 import { Trash2, Link, ImageIcon, GripVertical } from "lucide-react";
-import { Control, useFieldArray } from "react-hook-form";
+import { Control, useFieldArray, useFormContext } from "react-hook-form";
 import {
   DndContext,
   closestCenter,
@@ -35,6 +35,7 @@ import { PortalFormData } from "./portal-form";
 
 interface PortalMediaFormProps {
   control: Control<PortalFormData>;
+  cardImage?: boolean
 }
 
 const SortableItem = ({
@@ -71,14 +72,23 @@ const SortableItem = ({
   );
 };
 
-export function PortalMediaForm({ control }: PortalMediaFormProps) {
-  const { fields, append, remove, move } = useFieldArray({
+export function PortalMediaForm({ control, cardImage = false }: PortalMediaFormProps) {
+
+  type CurrentImage = {
+    preview: string | ArrayBuffer | null;
+    file: File;
+  };
+
+  const { fields, append, remove, move, update } = useFieldArray({
     control,
     name: "items",
   });
 
+  const { setValue, watch } = useFormContext();
   const [isOpen, setIsOpen] = useState(false);
-  const [currentImage, setCurrentImage] = useState<string | null>(null);
+  const [currentImage, setCurrentImage] = useState<CurrentImage | null>(null);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [fileNames, setFileNames] = useState<{[key: number]: string}>({});
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -96,27 +106,128 @@ export function PortalMediaForm({ control }: PortalMediaFormProps) {
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, index?: number) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setCurrentImage(reader.result as string);
-
+        setCurrentImage({ preview: reader.result, file });
+        if (!cardImage) setEditingIndex(index ?? null);
         setIsOpen(true);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleCropComplete = () => {
+  const handleCropComplete = (croppedUrl: string) => {
+    if (cardImage) {
+      setValue("cardImage", croppedUrl);
+      setValue("cardImageFileName", currentImage?.file?.name ?? ""); 
+    } else if (editingIndex !== null) {
+      update(editingIndex, {
+        ...fields[editingIndex],
+        image: croppedUrl
+      });
+      setFileNames(prev => ({
+        ...prev,
+        [editingIndex]: currentImage?.file?.name ?? ""
+      }));
+    }
+    setCurrentImage(prev =>
+      prev ? { ...prev, preview: croppedUrl } : null
+    );
     setIsOpen(false);
-    setCurrentImage(null);
+    setEditingIndex(null);
   };
 
   return (
     <Card className="bg-card">
+      <CardHeader>
+        <CardTitle>{cardImage ? 'Card Image' : 'Items'}</CardTitle>
+      </CardHeader>
       <CardContent className="space-y-4 p-6">
+      {cardImage ? (
+        <div className="flex-grow space-y-4">
+          <div className="flex items-center gap-2">
+            <div className="flex-shrink-0">
+              <input
+                type="file"
+                id="card-image-upload"
+                className="hidden"
+                accept="image/*"
+                onChange={(e) => handleImageUpload(e)}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="bg-background hover:bg-accent"
+                onClick={() =>
+                  document.getElementById("card-image-upload")?.click()
+                }
+              >
+                <ImageIcon className="h-4 w-4" />
+              </Button>
+            </div>
+            <FormField
+              control={control}
+              name="cardImage"
+              render={({ field }) => (
+                <FormItem className="flex-grow">
+                  <FormControl>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      disabled
+                      placeholder="Card image URL"
+                      value={watch("cardImageFileName") ?? ""}
+                      readOnly
+                      />
+                      {field.value && (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <div className="relative h-10 w-10 rounded-md overflow-hidden border border-border">
+                                  <Image
+                                    src={field.value}
+                                    alt={`Card Image`}
+                                    fill
+                                    className="object-cover"
+                                  />
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent
+                                side="right"
+                                className="w-64 p-0"
+                              >
+                                <div className="relative aspect-square w-full overflow-hidden rounded-md">
+                                  <Image
+                                    src={field.value}
+                                    alt={`Card Image preview`}
+                                    fill
+                                    className="object-cover"
+                                  />
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
+                  </div>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              className="bg-background hover:bg-destructive hover:text-destructive-foreground"
+              onClick={() => setValue("cardImage", "")}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+        ) : (
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -129,7 +240,7 @@ export function PortalMediaForm({ control }: PortalMediaFormProps) {
             {fields.map((item, index) => (
               <SortableItem key={item.id} id={item.id}>
                 <div className="flex-grow space-y-4">
-                  <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2">
                     <Button
                       type="button"
                       variant="outline"
@@ -155,7 +266,6 @@ export function PortalMediaForm({ control }: PortalMediaFormProps) {
                       )}
                     />
                   </div>
-
                   <div className="flex items-center gap-2">
                     <div className="flex-shrink-0">
                       <input
@@ -163,7 +273,7 @@ export function PortalMediaForm({ control }: PortalMediaFormProps) {
                         id={`image-upload-${index}`}
                         className="hidden"
                         accept="image/*"
-                        onChange={e => handleImageUpload(e)}
+                        onChange={e => handleImageUpload(e, index)}
                       />
                       <Button
                         type="button"
@@ -189,7 +299,7 @@ export function PortalMediaForm({ control }: PortalMediaFormProps) {
                               <Input
                                 {...field}
                                 placeholder="Image URL"
-                                value={field.value ?? ""}
+                                value={(fileNames[index] || field.value) ?? ""}
                                 className="bg-background"
                               />
                               {field.value && (
@@ -241,15 +351,17 @@ export function PortalMediaForm({ control }: PortalMediaFormProps) {
             ))}
           </SortableContext>
         </DndContext>
-
-        <Button
+        )}
+        { !cardImage && (
+          <Button
           type="button"
           variant="outline"
           onClick={() => append({ url: "", image: "" })}
           className="mt-4 bg-background hover:bg-accent"
-        >
+          >
           Add Item
         </Button>
+          )}
       </CardContent>
 
       <ImageCropModal
@@ -257,9 +369,10 @@ export function PortalMediaForm({ control }: PortalMediaFormProps) {
         onClose={() => {
           setIsOpen(false);
           setCurrentImage(null);
+          setEditingIndex(null);
         }}
-        onCropComplete={handleCropComplete}
-        imageUrl={currentImage || ""}
+        onCropComplete={(croppedUrl) => handleCropComplete(croppedUrl)}
+        imageUrl={currentImage?.preview as string || ""}
       />
     </Card>
   );

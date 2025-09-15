@@ -32,9 +32,8 @@ const settingsSchema = z.object({
     }),
   }),
   rifts: z.object({
-    maxRiftCount: z.number().int(),
-    spawnRadius: z.number(),
-    minDistanceToGenerate: z.number(),
+    amountPerTile: z.number().int(),
+    expirationTime: z.number(),
   }),
   skills: z.object({
     base: z.object({
@@ -169,8 +168,8 @@ export default function SettingsPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <SliderInput
-                    label="Max Rift Count"
-                    name="rifts.maxRiftCount"
+                    label="Max rift per tile"
+                    name="rifts.amountPerTile"
                     control={form.control}
                     min={0}
                     max={100}
@@ -178,16 +177,8 @@ export default function SettingsPage() {
                     isInteger={true}
                   />
                   <SliderInput
-                    label="Spawn Radius"
-                    name="rifts.spawnRadius"
-                    control={form.control}
-                    min={0}
-                    max={1000}
-                    step={0.1}
-                  />
-                  <SliderInput
-                    label="Min Distance to Generate"
-                    name="rifts.minDistanceToGenerate"
+                    label="Expiration time"
+                    name="rifts.expirationTime"
                     control={form.control}
                     min={0}
                     max={1000}
