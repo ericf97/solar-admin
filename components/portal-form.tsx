@@ -38,16 +38,18 @@ import { EEnergyType } from "@/types/energy";
 import { EPortalType } from "@/types/portal";
 import { SliderInput } from "./slider-input";
 import { PortalMediaForm } from "./portal-media-form";
+import { EPortalState } from "@/types/state";
 
 const MapWithNoSSR = dynamic(() => import("@/components/map"), {
   ssr: false,
 });
 
 const portalSchema = z.object({
-  zohoRecordId: z.string(),
+  zohoRecordId: z.string().optional(),
   name: z.string().min(1, "Name is required"),
   energyType: z.nativeEnum(EEnergyType),
   portalType: z.nativeEnum(EPortalType),
+  state: z.nativeEnum(EPortalState),
   location: z.object({
     type: z.string(),
     coordinates: z.tuple([z.number(), z.number()]),
@@ -112,6 +114,7 @@ export function PortalForm({
       rewards: { energy: 0, sap: 0, exp: 0 },
       cardImage: "",
       items: [{ url: "", image: "" }],
+      state: EPortalState.DRAFT
     },
   });
 
@@ -244,6 +247,36 @@ export function PortalForm({
                               </SelectItem>
                             );
                           })}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="state"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Portal State</FormLabel>
+                      <Select
+                        disabled={!initialData?.id}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select state" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Object.values(EPortalState).map(type => (
+                            <SelectItem key={type} value={type}>
+                              <Badge className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5">
+                                {type}
+                              </Badge>
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       <FormMessage />

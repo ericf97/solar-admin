@@ -31,7 +31,7 @@ export interface IPortalLocation {
 
 export interface IPortal {
   id: string;
-  zohoRecordId: string;
+  zohoRecordId?: string;
   name: string;
   energyType: EEnergyType;
   portalType: EPortalType;
