@@ -15,7 +15,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
+import { ArrowUp, ArrowDown } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -112,13 +112,22 @@ export function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map(header => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id}
+                      onClick={header.column.getToggleSortingHandler()}
+                      className="cursor-pointer select-none">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                        : (
+                          <div className="flex items-center gap-1">
+                            {flexRender(header.column.columnDef.header, header.getContext())}
+                            {header.column.getIsSorted() === "asc" && (
+                              <ArrowUp className="w-4 h-4 inline" />
+                            )}
+                            {header.column.getIsSorted() === "desc" && (
+                              <ArrowDown className="w-4 h-4 inline" />
+                            )}
+                          </div>
+                        )}
                     </TableHead>
                   );
                 })}
