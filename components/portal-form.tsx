@@ -39,6 +39,7 @@ import { EPortalType } from "@/types/portal";
 import { SliderInput } from "./slider-input";
 import { PortalMediaForm } from "./portal-media-form";
 import { EPortalState } from "@/types/state";
+import { EPortalIndustry } from "@/types/industry";
 
 const MapWithNoSSR = dynamic(() => import("@/components/map"), {
   ssr: false,
@@ -49,6 +50,7 @@ const portalSchema = z.object({
   name: z.string().min(1, "Name is required"),
   energyType: z.nativeEnum(EEnergyType),
   portalType: z.nativeEnum(EPortalType),
+  industry: z.nativeEnum(EPortalIndustry),
   state: z.nativeEnum(EPortalState),
   location: z.object({
     type: z.string(),
@@ -104,6 +106,7 @@ export function PortalForm({
       name: "",
       energyType: EEnergyType.WATER,
       portalType: EPortalType.WATER,
+      industry: EPortalIndustry.CAFE,
       location: {
         type: "Point",
         coordinates: [0, 0],
@@ -111,7 +114,7 @@ export function PortalForm({
       address: "",
       website: "",
       shippingCode: "",
-      rewards: { energy: 0, sap: 0, exp: 0 },
+      rewards: { energy: 10, sap: 10, exp: 10 },
       cardImage: "",
       items: [{ url: "", image: "" }],
       state: EPortalState.DRAFT
@@ -253,6 +256,36 @@ export function PortalForm({
                     </FormItem>
                   )}
                 />
+                                <FormField
+                  control={form.control}
+                  name="industry"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Industry Type</FormLabel>
+                      <Select
+                        disabled={!initialData?.id}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select industry" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Object.values(EPortalIndustry).map(type => (
+                            <SelectItem key={type} value={type}>
+                              <Badge className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5">
+                                {type}
+                              </Badge>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="state"
@@ -285,7 +318,6 @@ export function PortalForm({
                 />
               </CardContent>
             </Card>
-
             <Card>
               <CardHeader>
                 <CardTitle>Location Information</CardTitle>
@@ -297,7 +329,7 @@ export function PortalForm({
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
-                    name="location.coordinates.0"
+                    name="location.coordinates.1"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Latitude</FormLabel>
@@ -320,7 +352,7 @@ export function PortalForm({
                   />
                   <FormField
                     control={form.control}
-                    name="location.coordinates.1"
+                    name="location.coordinates.0"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Longitude</FormLabel>

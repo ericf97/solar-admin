@@ -58,6 +58,14 @@ const columns: ColumnDef<IPortal>[] = [
     },
   },
   {
+    accessorKey: "industry",
+    header: "Industry Type",
+    cell: ({ row }) => {
+      const industry = row.getValue("industry") as string;
+      return <Badge>{industry.toUpperCase()}</Badge>;
+    },
+  },
+  {
     accessorKey: "address",
     header: "Address",
   },
