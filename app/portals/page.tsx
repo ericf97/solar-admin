@@ -62,7 +62,7 @@ const columns: ColumnDef<IPortal>[] = [
     header: "Industry Type",
     cell: ({ row }) => {
       const industry = row.getValue("industry") as string;
-      return <Badge>{industry.toUpperCase()}</Badge>;
+      return <Badge>{industry?.toUpperCase()}</Badge>;
     },
   },
   {
