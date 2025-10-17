@@ -1,18 +1,22 @@
-import { ThemeProvider } from "@/components/theme-provider"
-import { Inter } from 'next/font/google'
-import { AlertProvider } from "./context/alert.context"
-import "./globals.css"
+import { ThemeProvider } from "@/components/theme-provider";
+import { CopilotWrapper } from "@/components/copilot/copilot-wrapper";
+import { Inter } from "next/font/google";
+import { AlertProvider } from "./context/alert.context";
+import { Toaster } from "@/components/ui/sonner";
+import "./globals.css";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} min-h-screen bg-background text-foreground`}>
+      <body
+        className={`${inter.className} h-screen overflow-hidden bg-background text-foreground`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -21,10 +25,11 @@ export default function RootLayout({
         >
           <AlertProvider>
             {children}
+            <CopilotWrapper />
+            <Toaster />
           </AlertProvider>
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }
-

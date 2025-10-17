@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { ISkill } from "@/types/skill";
 import { EnergyBadge } from "@/components/energy-badge";
 import { Badge } from "@/components/ui/badge";
-import { skillService } from "@/services/skillService";
+import { skillService } from "@/services/skill-service";
 import { SliderInput } from "@/components/slider-input";
 import { Form } from "@/components/ui/form";
 
@@ -174,4 +174,3 @@ export function EditSkillModal({
     </Dialog>
   );
 }
-

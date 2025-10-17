@@ -46,32 +46,32 @@ const settingsCategories = [
 
 export function SettingsWidget() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
       {settingsCategories.map(category => (
         <Link href={category.href} key={category.name} className="block">
-          <Card className="h-full transition-all hover:shadow-md cursor-pointer bg-card hover:bg-accent/50">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <div className="bg-primary/10 p-3 rounded-full">
+          <Card className="h-full transition-all hover:shadow-md cursor-pointer border border-white dark:border-border hover:border-gray-300 dark:hover:border-gray-600">
+            <CardContent className="p-3">
+              <div className="flex items-start gap-3">
+                <div className="bg-muted p-2 rounded-lg shrink-0">
                   <category.icon className="w-5 h-5 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center justify-between gap-2 mb-2">
                     <div>
-                      <h3 className="font-semibold text-base">
+                      <h3 className="font-semibold text-base text-gray-900 dark:text-white">
                         {category.name}
                       </h3>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-xs text-muted-foreground">
                         {category.subtitle}
                       </p>
                     </div>
                     <ChevronRight className="w-5 h-5 text-muted-foreground shrink-0" />
                   </div>
-                  <div className="mt-4 space-y-1">
+                  <div className="space-y-1">
                     {category.preview.map((line, index) => (
                       <p
                         key={index}
-                        className="text-sm text-muted-foreground truncate"
+                        className="text-xs text-muted-foreground line-clamp-1"
                       >
                         {line}
                       </p>
@@ -86,4 +86,3 @@ export function SettingsWidget() {
     </div>
   );
 }
-

@@ -19,6 +19,7 @@ interface SliderInputProps {
   max: number;
   step: number;
   isInteger?: boolean;
+  disabled?: boolean;
 }
 
 export function SliderInput({
@@ -29,6 +30,7 @@ export function SliderInput({
   max,
   step,
   isInteger = false,
+  disabled = false,
 }: SliderInputProps) {
   return (
     <FormField
@@ -49,6 +51,7 @@ export function SliderInput({
                 max={max}
                 step={step}
                 className="flex-grow"
+                disabled={disabled}
               />
               <Input
                 type="number"
@@ -73,6 +76,7 @@ export function SliderInput({
                 }}
                 step={isInteger ? 1 : step}
                 className="w-20"
+                disabled={disabled}
               />
             </div>
           </FormControl>
@@ -82,4 +86,3 @@ export function SliderInput({
     />
   );
 }
-

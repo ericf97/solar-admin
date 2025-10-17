@@ -1,5 +1,4 @@
 import { PortalFormData } from "@/components/portal-form";
-import * as z from "zod";
 import { EEnergyType } from "./energy";
 
 export enum EPortalType {
@@ -55,5 +54,5 @@ export interface PortalFormProps {
   initialData?: IPortal;
   onSubmit: (data: PortalFormData) => Promise<void>;
   onCancel: () => void;
+  hideActions?: boolean;
 }
-

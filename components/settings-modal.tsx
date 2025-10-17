@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useTheme } from "next-themes";
-import { Sun, Moon, Monitor } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -18,8 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useApiStore } from "@/store/apiStore";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useApiStore } from "@/store/api-store";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -27,10 +24,9 @@ interface SettingsModalProps {
 }
 
 export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
-  const { theme, setTheme } = useTheme();
   const { baseUrl, setBaseUrl } = useApiStore();
   const [environment, setEnvironment] = useState<"local" | "dev" | "prod">(
-    "dev"
+    "local"
   );
   const [localUrl, setLocalUrl] = useState("http://localhost:3000");
 
@@ -98,43 +94,6 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
-            <Label>Theme</Label>
-            <RadioGroup
-              defaultValue={theme}
-              onValueChange={setTheme}
-              className="grid grid-cols-3 gap-2"
-            >
-              <Label
-                htmlFor="light"
-                className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary"
-              >
-                <RadioGroupItem value="light" id="light" className="sr-only" />
-                <Sun className="h-6 w-6 mb-2" />
-                <span className="text-sm font-medium">Light</span>
-              </Label>
-              <Label
-                htmlFor="dark"
-                className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary"
-              >
-                <RadioGroupItem value="dark" id="dark" className="sr-only" />
-                <Moon className="h-6 w-6 mb-2" />
-                <span className="text-sm font-medium">Dark</span>
-              </Label>
-              <Label
-                htmlFor="system"
-                className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary"
-              >
-                <RadioGroupItem
-                  value="system"
-                  id="system"
-                  className="sr-only"
-                />
-                <Monitor className="h-6 w-6 mb-2" />
-                <span className="text-sm font-medium">System</span>
-              </Label>
-            </RadioGroup>
-          </div>
-          <div className="grid gap-2">
             <Label htmlFor="environment">Environment</Label>
             <Select
               value={environment}
@@ -174,4 +133,3 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     </Dialog>
   );
 }
-

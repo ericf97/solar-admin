@@ -1,35 +1,35 @@
-import { useState } from "react"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
-import { PortalForm } from "./portal-form"
-import { PortalFormProps } from "@/types/portal"
-import { Tabs, TabsList, TabsTrigger } from "./ui/tabs"
-import { useForm } from "react-hook-form"
+import { useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { PortalForm } from "./portal-form";
+import { PortalFormProps } from "@/types/portal";
+import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
+import { useForm } from "react-hook-form";
 
-export function ViewForm({
-  initialData,
-  onSubmit,
-  onCancel,
-}: PortalFormProps) {
+export function ViewForm({ initialData, onSubmit, onCancel }: PortalFormProps) {
   const [viewMode, setViewMode] = useState<"form" | "json">("form");
 
   const form = useForm({
     defaultValues: initialData || {},
-  })
+  });
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(
         JSON.stringify(form.getValues(), null, 2)
-      )
-      alert('copy to clipboard')
+      );
+      alert("copy to clipboard");
     } catch {
-      alert('error copy to clipboard')
+      alert("error copy to clipboard");
     }
-  }
+  };
 
   return (
-    <Tabs value={viewMode} onValueChange={v => setViewMode(v as "form" | "json")} className="w-full">
+    <Tabs
+      value={viewMode}
+      onValueChange={v => setViewMode(v as "form" | "json")}
+      className="w-full"
+    >
       <TabsList>
         <TabsTrigger value="form">Form View</TabsTrigger>
         <TabsTrigger value="json">JSON View</TabsTrigger>
@@ -37,10 +37,11 @@ export function ViewForm({
 
       {/* --- Form View --- */}
       {viewMode === "form" && (
-        <PortalForm 
+        <PortalForm
           initialData={initialData}
           onSubmit={onSubmit}
-          onCancel={onCancel}/>
+          onCancel={onCancel}
+        />
       )}
 
       {/* --- JSON View --- */}
@@ -56,7 +57,6 @@ export function ViewForm({
           </Button>
         </div>
       )}
-
     </Tabs>
-  )
+  );
 }

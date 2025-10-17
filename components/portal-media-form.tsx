@@ -35,7 +35,7 @@ import { PortalFormData } from "./portal-form";
 
 interface PortalMediaFormProps {
   control: Control<PortalFormData>;
-  cardImage?: boolean
+  cardImage?: boolean;
 }
 
 const SortableItem = ({
@@ -72,8 +72,10 @@ const SortableItem = ({
   );
 };
 
-export function PortalMediaForm({ control, cardImage = false }: PortalMediaFormProps) {
-
+export function PortalMediaForm({
+  control,
+  cardImage = false,
+}: PortalMediaFormProps) {
   type CurrentImage = {
     preview: string | ArrayBuffer | null;
     file: File;
@@ -88,7 +90,7 @@ export function PortalMediaForm({ control, cardImage = false }: PortalMediaFormP
   const [isOpen, setIsOpen] = useState(false);
   const [currentImage, setCurrentImage] = useState<CurrentImage | null>(null);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [fileNames, setFileNames] = useState<{[key: number]: string}>({});
+  const [fileNames, setFileNames] = useState<{ [key: number]: string }>({});
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -106,7 +108,10 @@ export function PortalMediaForm({ control, cardImage = false }: PortalMediaFormP
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, index?: number) => {
+  const handleImageUpload = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index?: number
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -122,20 +127,18 @@ export function PortalMediaForm({ control, cardImage = false }: PortalMediaFormP
   const handleCropComplete = (croppedUrl: string) => {
     if (cardImage) {
       setValue("cardImage", croppedUrl);
-      setValue("cardImageFileName", currentImage?.file?.name ?? ""); 
+      setValue("cardImageFileName", currentImage?.file?.name ?? "");
     } else if (editingIndex !== null) {
       update(editingIndex, {
         ...fields[editingIndex],
-        image: croppedUrl
+        image: croppedUrl,
       });
       setFileNames(prev => ({
         ...prev,
-        [editingIndex]: currentImage?.file?.name ?? ""
+        [editingIndex]: currentImage?.file?.name ?? "",
       }));
     }
-    setCurrentImage(prev =>
-      prev ? { ...prev, preview: croppedUrl } : null
-    );
+    setCurrentImage(prev => (prev ? { ...prev, preview: croppedUrl } : null));
     setIsOpen(false);
     setEditingIndex(null);
   };
@@ -143,46 +146,46 @@ export function PortalMediaForm({ control, cardImage = false }: PortalMediaFormP
   return (
     <Card className="bg-card">
       <CardHeader>
-        <CardTitle>{cardImage ? 'Card Image' : 'Items'}</CardTitle>
+        <CardTitle>{cardImage ? "Card Image" : "Items"}</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4 p-6">
-      {cardImage ? (
-        <div className="flex-grow space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="flex-shrink-0">
-              <input
-                type="file"
-                id="card-image-upload"
-                className="hidden"
-                accept="image/*"
-                onChange={(e) => handleImageUpload(e)}
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                className="bg-background hover:bg-accent"
-                onClick={() =>
-                  document.getElementById("card-image-upload")?.click()
-                }
-              >
-                <ImageIcon className="h-4 w-4" />
-              </Button>
-            </div>
-            <FormField
-              control={control}
-              name="cardImage"
-              render={({ field }) => (
-                <FormItem className="flex-grow">
-                  <FormControl>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      disabled
-                      placeholder="Card image URL"
-                      value={watch("cardImageFileName") ?? ""}
-                      readOnly
-                      />
-                      {field.value && (
+      <CardContent className="space-y-4 p-6 pt-8">
+        {cardImage ? (
+          <div className="flex-grow space-y-4">
+            <div className="flex items-center gap-2">
+              <div className="flex-shrink-0">
+                <input
+                  type="file"
+                  id="card-image-upload"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={e => handleImageUpload(e)}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  className="bg-background hover:bg-accent"
+                  onClick={() =>
+                    document.getElementById("card-image-upload")?.click()
+                  }
+                >
+                  <ImageIcon className="h-4 w-4" />
+                </Button>
+              </div>
+              <FormField
+                control={control}
+                name="cardImage"
+                render={({ field }) => (
+                  <FormItem className="flex-grow">
+                    <FormControl>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          disabled
+                          placeholder="Card image URL"
+                          value={watch("cardImageFileName") ?? ""}
+                          readOnly
+                        />
+                        {field.value && (
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger>
@@ -195,10 +198,7 @@ export function PortalMediaForm({ control, cardImage = false }: PortalMediaFormP
                                   />
                                 </div>
                               </TooltipTrigger>
-                              <TooltipContent
-                                side="right"
-                                className="w-64 p-0"
-                              >
+                              <TooltipContent side="right" className="w-64 p-0">
                                 <div className="relative aspect-square w-full overflow-hidden rounded-md">
                                   <Image
                                     src={field.value}
@@ -211,157 +211,159 @@ export function PortalMediaForm({ control, cardImage = false }: PortalMediaFormP
                             </Tooltip>
                           </TooltipProvider>
                         )}
-                  </div>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              className="bg-background hover:bg-destructive hover:text-destructive-foreground"
-              onClick={() => setValue("cardImage", "")}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="bg-background hover:bg-destructive hover:text-destructive-foreground"
+                onClick={() => setValue("cardImage", "")}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-        </div>
         ) : (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={fields.map(item => item.id)}
-            strategy={verticalListSortingStrategy}
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
           >
-            {fields.map((item, index) => (
-              <SortableItem key={item.id} id={item.id}>
-                <div className="flex-grow space-y-4">
-                <div className="flex items-center gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      className="flex-shrink-0 bg-background hover:bg-accent"
-                    >
-                      <Link className="h-4 w-4" />
-                    </Button>
-                    <FormField
-                      control={control}
-                      name={`items.${index}.url`}
-                      render={({ field }) => (
-                        <FormItem className="flex-grow">
-                          <FormControl>
-                            <Input
-                              {...field}
-                              placeholder="Item URL"
-                              value={field.value ?? ""}
-                              className="bg-background"
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="flex-shrink-0">
-                      <input
-                        type="file"
-                        id={`image-upload-${index}`}
-                        className="hidden"
-                        accept="image/*"
-                        onChange={e => handleImageUpload(e, index)}
+            <SortableContext
+              items={fields.map(item => item.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {fields.map((item, index) => (
+                <SortableItem key={item.id} id={item.id}>
+                  <div className="flex-grow space-y-4">
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="flex-shrink-0 bg-background hover:bg-accent"
+                      >
+                        <Link className="h-4 w-4" />
+                      </Button>
+                      <FormField
+                        control={control}
+                        name={`items.${index}.url`}
+                        render={({ field }) => (
+                          <FormItem className="flex-grow">
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="Item URL"
+                                value={field.value ?? ""}
+                                className="bg-background"
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex-shrink-0">
+                        <input
+                          type="file"
+                          id={`image-upload-${index}`}
+                          className="hidden"
+                          accept="image/*"
+                          onChange={e => handleImageUpload(e, index)}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          className="bg-background hover:bg-accent"
+                          onClick={() =>
+                            document
+                              .getElementById(`image-upload-${index}`)
+                              ?.click()
+                          }
+                        >
+                          <ImageIcon className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <FormField
+                        control={control}
+                        name={`items.${index}.image`}
+                        render={({ field }) => (
+                          <FormItem className="flex-grow">
+                            <FormControl>
+                              <div className="flex items-center gap-2">
+                                <Input
+                                  {...field}
+                                  placeholder="Image URL"
+                                  value={
+                                    (fileNames[index] || field.value) ?? ""
+                                  }
+                                  className="bg-background"
+                                />
+                                {field.value && (
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger>
+                                        <div className="relative h-10 w-10 rounded-md overflow-hidden border border-border">
+                                          <Image
+                                            src={field.value}
+                                            alt={`Item ${index + 1}`}
+                                            fill
+                                            className="object-cover"
+                                          />
+                                        </div>
+                                      </TooltipTrigger>
+                                      <TooltipContent
+                                        side="right"
+                                        className="w-64 p-0"
+                                      >
+                                        <div className="relative aspect-square w-full overflow-hidden rounded-md">
+                                          <Image
+                                            src={field.value}
+                                            alt={`Item ${index + 1} preview`}
+                                            fill
+                                            className="object-cover"
+                                          />
+                                        </div>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                )}
+                              </div>
+                            </FormControl>
+                          </FormItem>
+                        )}
                       />
                       <Button
                         type="button"
                         variant="outline"
                         size="icon"
-                        className="bg-background hover:bg-accent"
-                        onClick={() =>
-                          document
-                            .getElementById(`image-upload-${index}`)
-                            ?.click()
-                        }
+                        className="bg-background hover:bg-destructive hover:text-destructive-foreground"
+                        onClick={() => remove(index)}
                       >
-                        <ImageIcon className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
-                    <FormField
-                      control={control}
-                      name={`items.${index}.image`}
-                      render={({ field }) => (
-                        <FormItem className="flex-grow">
-                          <FormControl>
-                            <div className="flex items-center gap-2">
-                              <Input
-                                {...field}
-                                placeholder="Image URL"
-                                value={(fileNames[index] || field.value) ?? ""}
-                                className="bg-background"
-                              />
-                              {field.value && (
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger>
-                                      <div className="relative h-10 w-10 rounded-md overflow-hidden border border-border">
-                                        <Image
-                                          src={field.value}
-                                          alt={`Item ${index + 1}`}
-                                          fill
-                                          className="object-cover"
-                                        />
-                                      </div>
-                                    </TooltipTrigger>
-                                    <TooltipContent
-                                      side="right"
-                                      className="w-64 p-0"
-                                    >
-                                      <div className="relative aspect-square w-full overflow-hidden rounded-md">
-                                        <Image
-                                          src={field.value}
-                                          alt={`Item ${index + 1} preview`}
-                                          fill
-                                          className="object-cover"
-                                        />
-                                      </div>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
-                              )}
-                            </div>
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      className="bg-background hover:bg-destructive hover:text-destructive-foreground"
-                      onClick={() => remove(index)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
                   </div>
-                </div>
-              </SortableItem>
-            ))}
-          </SortableContext>
-        </DndContext>
+                </SortableItem>
+              ))}
+            </SortableContext>
+          </DndContext>
         )}
-        { !cardImage && (
+        {!cardImage && (
           <Button
-          type="button"
-          variant="outline"
-          onClick={() => append({ url: "", image: "" })}
-          className="mt-4 bg-background hover:bg-accent"
+            type="button"
+            variant="outline"
+            onClick={() => append({ url: "", image: "" })}
+            className="mt-4 bg-background hover:bg-accent"
           >
-          Add Item
-        </Button>
-          )}
+            Add Item
+          </Button>
+        )}
       </CardContent>
 
       <ImageCropModal
@@ -371,10 +373,9 @@ export function PortalMediaForm({ control, cardImage = false }: PortalMediaFormP
           setCurrentImage(null);
           setEditingIndex(null);
         }}
-        onCropComplete={(croppedUrl) => handleCropComplete(croppedUrl)}
-        imageUrl={currentImage?.preview as string || ""}
+        onCropComplete={croppedUrl => handleCropComplete(croppedUrl)}
+        imageUrl={(currentImage?.preview as string) || ""}
       />
     </Card>
   );
 }
-
