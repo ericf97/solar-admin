@@ -1,17 +1,36 @@
+"use client";
+
+import { Header } from "@/components/header";
 import { Sidebar } from "@/components/sidebar";
+import { cn } from "@/lib/utils";
+import { useCopilotStore } from "@/store/copilot-store";
 
-import { ReactNode } from "react";
+interface LayoutProps {
+  children: React.ReactNode;
+}
 
-export function Layout({ children }: { children: ReactNode }) {
+export function Layout({ children }: LayoutProps) {
+  const isCopilotOpen = useCopilotStore(state => state.isOpen);
+  const isFullscreen = useCopilotStore(state => state.isFullscreen);
+
   return (
-    <div className="flex h-screen overflow-hidden bg-background text-foreground">
-      <aside className="hidden w-64 overflow-y-auto border-r border-border md:block">
+    <div className="h-screen flex flex-col overflow-hidden">
+      <Header />
+      <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-      </aside>
-      <main className="flex-1 overflow-y-auto bg-background p-4 md:p-6 md:ml-4">
-        {children}
-      </main>
+        <main
+          className={cn(
+            "flex-1 overflow-y-auto mr-2 mb-2 bg-[hsl(var(--main-content))] rounded-lg p-3 sm:p-4 lg:p-6 border border-[hsl(var(--border))]",
+
+            isCopilotOpen &&
+              !isFullscreen &&
+              "mr-[450px] transition-[margin] duration-300 ease-in-out",
+            isCopilotOpen && isFullscreen && "opacity-0 pointer-events-none"
+          )}
+        >
+          {children}
+        </main>
+      </div>
     </div>
   );
 }
-

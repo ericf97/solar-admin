@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { IMonster } from "@/types/monster";
-import { monsterService } from "@/services/monsterService";
+import { monsterService } from "@/services/monsters-service";
 import { SliderInput } from "@/components/slider-input";
 import { Form } from "@/components/ui/form";
 

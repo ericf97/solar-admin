@@ -8,15 +8,22 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { EnergyBadge } from "@/components/energy-badge";
 import { Layout } from "@/components/layout";
-import { PortalModal } from "@/components/portal-modal";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Plus, MapPin, Table, Upload } from "lucide-react";
-import { portalService } from "@/services/portalService";
+import { Plus, Upload } from "lucide-react";
+import { portalService } from "@/services/portals-service";
 import { PortalSearch, SearchFilters } from "@/components/portal-search";
 import { EEnergyType } from "@/types/energy";
-import { DefaultImages } from "@/lib/defaultImages";
-import { isArray } from "util";
+import { DefaultImages } from "@/lib/default-images";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuCheckboxItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { SplitView } from "@/components/split-view";
+import { PortalForm } from "@/components/portal-form";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const columns: ColumnDef<IPortal>[] = [
   {
@@ -26,7 +33,10 @@ const columns: ColumnDef<IPortal>[] = [
       const portal: IPortal = row.original;
       return (
         <Avatar>
-          <AvatarImage src={portal.cardImage || DefaultImages[portal.portalType]} alt={portal.name} />
+          <AvatarImage
+            src={portal.cardImage || DefaultImages[portal.portalType]}
+            alt={portal.name}
+          />
           <AvatarFallback>
             {portal.name.slice(0, 2).toUpperCase()}
           </AvatarFallback>
@@ -40,7 +50,7 @@ const columns: ColumnDef<IPortal>[] = [
   },
   {
     accessorKey: "energyType",
-    header: "Energy Type",
+    header: "Energy",
     cell: ({ row }) => {
       const energyType = row.getValue("energyType") as EEnergyType;
       return (
@@ -52,7 +62,7 @@ const columns: ColumnDef<IPortal>[] = [
   },
   {
     accessorKey: "portalType",
-    header: "Portal Type",
+    header: "Type",
     cell: ({ row }) => {
       const portalType = row.getValue("portalType") as string;
       return <Badge>{portalType.toUpperCase()}</Badge>;
@@ -71,57 +81,28 @@ const columns: ColumnDef<IPortal>[] = [
   },
 ];
 
-function ViewModeButtons({
-  viewMode,
-  setViewMode,
-}: {
-  viewMode: "table" | "map";
-  setViewMode: (mode: "table" | "map") => void;
-}) {
-  return (
-    <div className="flex rounded-md bg-secondary p-1">
-      <button
-        onClick={() => setViewMode("table")}
-        className={`flex items-center justify-center rounded-md px-3 py-2 transition-colors ${
-          viewMode === "table"
-            ? "bg-primary text-primary-foreground"
-            : "text-muted-foreground"
-        }`}
-      >
-        <Table className="h-4 w-4" />
-      </button>
-      <button
-        onClick={() => setViewMode("map")}
-        className={`flex items-center justify-center rounded-md px-3 py-2 transition-colors ${
-          viewMode === "map"
-            ? "bg-primary text-primary-foreground"
-            : "text-muted-foreground"
-        }`}
-      >
-        <MapPin className="h-4 w-4" />
-      </button>
-    </div>
-  );
-}
+const portalStates = ["draft", "staged", "published", "archived"] as const;
 
 export default function PortalsPage() {
   const [portals, setPortals] = useState<IPortal[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPortal, setSelectedPortal] = useState<IPortal | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSplitViewOpen, setIsSplitViewOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchFilters, setSearchFilters] = useState<SearchFilters>({});
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
-  const [viewMode, setViewMode] = useState<"table" | "map">("table");
+  const [selectedStates, setSelectedStates] = useState<string[]>([
+    ...portalStates,
+  ]);
 
   const loadPortals = useCallback(async () => {
     setIsLoading(true);
     try {
       const filter = createFilterString(searchFilters);
-      console.log(filter)
       const response = await portalService.getPortals(
         filter,
         "name",
@@ -140,22 +121,68 @@ export default function PortalsPage() {
   }, [searchFilters, pagination.pageIndex, pagination.pageSize]);
 
   useEffect(() => {
-    if (viewMode === "table") {
-      loadPortals();
-    }
-  }, [viewMode, loadPortals]);
+    loadPortals();
+  }, [loadPortals]);
 
-  const handleRowClick = (portal: IPortal) => {
-    setSelectedPortal(portal);
-    setIsModalOpen(true);
+  const handleRowClick = async (portal: IPortal) => {
+    try {
+      const fullPortal = await portalService.getPortal(portal.id);
+      setSelectedPortal(fullPortal);
+      setIsSplitViewOpen(true);
+    } catch (e) {
+      console.error("Error loading portal:", e);
+    }
   };
+
+  const handleCloseSplitView = () => {
+    setIsSplitViewOpen(false);
+    setSelectedPortal(null);
+  };
+
+  const handlePortalSave = async () => {
+    const formElement = document.querySelector("form");
+    if (formElement) {
+      formElement.dispatchEvent(
+        new Event("submit", { cancelable: true, bubbles: true })
+      );
+    }
+  };
+
+  const handlePortalUpdate = async (data: unknown) => {
+    if (!selectedPortal) return;
+    setIsSubmitting(true);
+    try {
+      await portalService.updatePortal(
+        selectedPortal.id,
+        data as Partial<IPortal>
+      );
+      await loadPortals();
+      handleCloseSplitView();
+    } catch (error) {
+      console.error("Error updating portal:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const toggleState = (state: string) => {
+    setSelectedStates(prev =>
+      prev.includes(state) ? prev.filter(s => s !== state) : [...prev, state]
+    );
+  };
+
+  useEffect(() => {
+    const newFilters = { ...searchFilters, state: selectedStates };
+    setSearchFilters(newFilters);
+    setPagination(prev => ({ ...prev, pageIndex: 0 }));
+  }, [selectedStates]);
 
   const handleSearch = (filters: SearchFilters) => {
     const processedFilters: {
       searchTerm?: string;
       portalType?: string | null;
       energyType?: string | null;
-      state?: string[]
+      state?: string[];
     } = {};
     if (filters.searchTerm) {
       const searchTerms = [
@@ -172,9 +199,7 @@ export default function PortalsPage() {
     if (filters.energyType) {
       processedFilters.energyType = filters.energyType;
     }
-    if (filters.state && filters.state.length) {
-      processedFilters.state = filters.state
-    }
+    processedFilters.state = selectedStates;
     setSearchFilters(processedFilters);
     setPagination(prev => ({ ...prev, pageIndex: 0 }));
   };
@@ -188,61 +213,111 @@ export default function PortalsPage() {
 
   return (
     <Layout>
-      <div className="flex flex-col h-full">
+      <div className="h-full flex flex-col overflow-hidden">
         <div className="flex flex-col lg:flex-row items-center justify-between mb-6 gap-4">
           <div className="flex items-center justify-between w-full lg:w-auto">
             <h1 className="text-3xl font-bold text-foreground">Portals</h1>
-            <div className="flex items-center space-x-4 lg:hidden">
-              <ViewModeButtons viewMode={viewMode} setViewMode={setViewMode} />
-              <Link href="/portals/add" passHref>
-                <Button variant="outline" size="icon">
-                  <Plus className="h-6 w-6" />
-                </Button>
-              </Link>
-            </div>
           </div>
           <div className="flex items-center space-x-4 w-full lg:w-auto">
             <div className="w-full lg:w-auto">
               <PortalSearch onSearch={handleSearch} />
             </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-[160px] justify-between p-5 border rounded-lg"
+                >
+                  Filter State
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-[200px]">
+                {portalStates.map(state => (
+                  <DropdownMenuCheckboxItem
+                    key={state}
+                    checked={selectedStates.includes(state)}
+                    onCheckedChange={() => toggleState(state)}
+                  >
+                    {state}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
             <div className="hidden lg:flex items-center space-x-4">
-              <ViewModeButtons viewMode={viewMode} setViewMode={setViewMode} />
               <Link href="/portals/add" passHref>
                 <Button variant="outline" size="icon">
                   <Plus className="h-6 w-6" />
                 </Button>
               </Link>
               <Link href="/portals/bulk-add" passHref>
-              <Button variant="outline" size="icon" title="Upload CSV for bulk portals">
-                <Upload className="h-6 w-6" /> {/* Replace with your preferred icon */}
-              </Button>
-            </Link>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  title="Upload CSV for bulk portals"
+                >
+                  <Upload className="h-6 w-6" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
+        <div className="flex flex-1 gap-0 overflow-hidden">
+          <div
+            className={cn(
+              "flex flex-col flex-1 overflow-hidden transition-all duration-300 ease-in-out",
+              isSplitViewOpen ? "w-[45%] min-w-[600px]" : "w-full"
+            )}
+          >
+            <div className="flex-1 overflow-hidden mt-4">
+              {isLoading ? (
+                <p className="text-foreground">Loading...</p>
+              ) : (
+                <DataTable
+                  columns={columns}
+                  data={portals}
+                  onRowClick={handleRowClick}
+                  pagination={pagination}
+                  onPaginationChange={handlePaginationChange}
+                  pageCount={Math.ceil(totalCount / pagination.pageSize)}
+                />
+              )}
+            </div>
+          </div>
 
-        <div className="flex-1 overflow-hidden mt-4">
-          {isLoading && viewMode === "table" ? (
-            <p className="text-foreground">Loading...</p>
-          ) : viewMode === "table" ? (
-            <DataTable
-              columns={columns}
-              data={portals}
-              onRowClick={handleRowClick}
-              pagination={pagination}
-              onPaginationChange={handlePaginationChange}
-              pageCount={Math.ceil(totalCount / pagination.pageSize)}
-            />
-          ) : (
-            <></>
-          )}
+          <SplitView
+            isOpen={isSplitViewOpen}
+            onClose={handleCloseSplitView}
+            title={selectedPortal ? `Portal: ${selectedPortal.name}` : "Portal"}
+            actions={
+              <>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleCloseSplitView}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  onClick={handlePortalSave}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Saving..." : "Save"}
+                </Button>
+              </>
+            }
+          >
+            {selectedPortal && (
+              <PortalForm
+                key={selectedPortal.id} // remount form on selection change
+                initialData={selectedPortal}
+                onSubmit={handlePortalUpdate}
+                onCancel={handleCloseSplitView}
+                hideActions
+              />
+            )}
+          </SplitView>
         </div>
-
-        <PortalModal
-          portalId={selectedPortal?.id ?? null}
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-        />
       </div>
     </Layout>
   );
@@ -255,7 +330,6 @@ function createFilterString(filters: SearchFilters): string {
     filterParts.push(`portalType eq '${filters.portalType}'`);
   if (filters.energyType)
     filterParts.push(`energyType eq '${filters.energyType}'`);
-
   if (filters.state && filters.state.length > 0) {
     const stateFilter = `(${filters.state
       .map(s => `state eq '${s}'`)
@@ -264,4 +338,3 @@ function createFilterString(filters: SearchFilters): string {
   }
   return filterParts.join(" and ");
 }
-

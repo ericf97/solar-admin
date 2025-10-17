@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { portalService } from "@/services/portalService";
+import { portalService } from "@/services/portals-service";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { ViewForm } from "@/components/view-form";
@@ -77,11 +77,11 @@ export default function EditPortalPage() {
                 <Skeleton className="h-4 w-1/2" />
               </div>
             ) : portal ? (
-              <ViewForm 
+              <ViewForm
                 initialData={portal}
                 onSubmit={handleSubmit}
                 onCancel={() => router.push("/portals")}
-                />
+              />
             ) : (
               <p className="text-center text-lg text-muted-foreground">
                 Portal not found
@@ -93,4 +93,3 @@ export default function EditPortalPage() {
     </Layout>
   );
 }
-

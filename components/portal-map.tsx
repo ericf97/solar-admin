@@ -15,7 +15,7 @@ import {
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { IPortal } from "@/types/portal";
-import { portalService } from "@/services/portalService";
+import { portalService } from "@/services/portals-service";
 import { SearchFilters } from "@/components/portal-search";
 import { useDebouncedCallback } from "use-debounce";
 import Image from "next/image";
@@ -240,4 +240,3 @@ function createFilterString(filters: SearchFilters): string {
     filterParts.push(`contains(shippingCode, '${filters.shippingCode}')`);
   return filterParts.join(" and ");
 }
-

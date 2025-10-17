@@ -104,8 +104,8 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-auto border rounded-md">
+    <div className="flex flex-col max-h-full">
+      <div className="overflow-auto border rounded-md max-h-[calc(100vh-10rem)]">
         <Table>
           <TableHeader className="sticky top-0 bg-background z-10">
             {table.getHeaderGroups().map(headerGroup => (
@@ -132,6 +132,7 @@ export function DataTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                   onClick={() => onRowClick && onRowClick(row.original)}
+                  className="cursor-pointer hover:bg-muted/50"
                 >
                   {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>
@@ -164,4 +165,3 @@ export function DataTable<TData, TValue>({
     </div>
   );
 }
-

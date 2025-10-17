@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/data-table";
-import { skillService } from "@/services/skillService";
+import { skillService } from "@/services/skill-service";
 import { ISkill } from "@/types/skill";
 import { Layout } from "@/components/layout";
 import { EditSkillModal } from "@/components/edit-skill-modal";
@@ -93,7 +93,10 @@ export default function SkillsPage() {
               [EEnergyType.MIND]: 6,
               [EEnergyType.SAND]: 7,
             };
-            return energyOrder[a.energy as EEnergyType] - energyOrder[b.energy as EEnergyType];
+            return (
+              energyOrder[a.energy as EEnergyType] -
+              energyOrder[b.energy as EEnergyType]
+            );
           });
           setSkills(sortedSkills);
         }
@@ -127,30 +130,27 @@ export default function SkillsPage() {
 
   return (
     <Layout>
-      <div className="container mx-auto py-4 sm:py-6 md:py-10 px-4 sm:px-6 lg:px-8">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-5">Skills</h1>
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <DataTable
-              columns={columns}
-              data={skills}
-              onRowClick={skill => handleEditSkill(skill.id)}
-            />
-          </div>
-        )}
-        <EditSkillModal
-          skillId={selectedSkillId}
-          isOpen={isModalOpen}
-          onClose={() => {
-            setIsModalOpen(false);
-            setSelectedSkillId(null);
-          }}
-          onSave={handleSaveSkill}
-        />
-      </div>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-5">Skills</h1>
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <DataTable
+            columns={columns}
+            data={skills}
+            onRowClick={skill => handleEditSkill(skill.id)}
+          />
+        </div>
+      )}
+      <EditSkillModal
+        skillId={selectedSkillId}
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedSkillId(null);
+        }}
+        onSave={handleSaveSkill}
+      />
     </Layout>
   );
 }
-

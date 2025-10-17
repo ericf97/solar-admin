@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/data-table";
-import { monsterService } from "@/services/monsterService";
+import { monsterService } from "@/services/monsters-service";
 import { IMonster } from "@/types/monster";
 import { Layout } from "@/components/layout";
 import { EditMonsterModal } from "@/components/edit-monster-modal";
@@ -106,32 +106,27 @@ export default function MonstersPage() {
 
   return (
     <Layout>
-      <div className="container mx-auto py-4 sm:py-6 md:py-10 px-4 sm:px-6 lg:px-8">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-5">
-          Monsters
-        </h1>
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <DataTable
-              columns={columns}
-              data={monsters}
-              onRowClick={monster => handleEditMonster(monster.id)}
-            />
-          </div>
-        )}
-        <EditMonsterModal
-          monsterId={selectedMonsterId}
-          isOpen={isModalOpen}
-          onClose={() => {
-            setIsModalOpen(false);
-            setSelectedMonsterId(null);
-          }}
-          onSave={handleSaveMonster}
-        />
-      </div>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-5">Monsters</h1>
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <DataTable
+            columns={columns}
+            data={monsters}
+            onRowClick={monster => handleEditMonster(monster.id)}
+          />
+        </div>
+      )}
+      <EditMonsterModal
+        monsterId={selectedMonsterId}
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedMonsterId(null);
+        }}
+        onSave={handleSaveMonster}
+      />
     </Layout>
   );
 }
-

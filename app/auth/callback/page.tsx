@@ -1,18 +1,17 @@
-"use client"
-import { useEffect } from "react"
-import { useRouter, } from "next/navigation";
-import { useApiStore } from "../../../store/apiStore";
-import { authService } from "@/services/authService";
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useApiStore } from "../../../store/api-store";
+import { authService } from "@/services/auth-service";
 
 const FIREBASE_API_KEY = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
 const REDIRECT_URI = process.env.NEXT_PUBLIC_REDIRECT_URI;
 
 export default function AuthCallback() {
-  const router = useRouter()
+  const router = useRouter();
 
   async function getTokenFirebase(accessToken: string) {
-    if (!accessToken)
-      return;
+    if (!accessToken) return;
     const firebaseUrl = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key=${FIREBASE_API_KEY}`;
     const payload = {
       postBody: `access_token=${accessToken}&providerId=google.com`,
@@ -27,17 +26,17 @@ export default function AuthCallback() {
         body: JSON.stringify(payload),
       });
       const data = await response.json();
-      if (!response.ok) return ({ error: data.error });
+      if (!response.ok) return { error: data.error };
       return data;
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
   }
 
   useEffect(() => {
     const processLogin = async () => {
-      const hash = window.location.hash.substring(1)
-      const params = new URLSearchParams(hash)
+      const hash = window.location.hash.substring(1);
+      const params = new URLSearchParams(hash);
 
       const tokenGoogle = params.get("access_token");
       if (!tokenGoogle) {
@@ -47,7 +46,6 @@ export default function AuthCallback() {
       }
 
       try {
-
         const { idToken: accessToken } = await getTokenFirebase(tokenGoogle);
 
         if (!accessToken) {
@@ -60,16 +58,14 @@ export default function AuthCallback() {
         const userLogin = await authService.loginAdmin();
         store.setEmail(userLogin.email);
 
-        router.push('/')
+        router.push("/");
       } catch (err) {
         console.error("Login error:", err);
-        router.push('/unauthorized');
+        router.push("/unauthorized");
       }
-    }
-    processLogin()
+    };
+    processLogin();
+  }, [router]);
 
-
-  }, [router])
-
-  return <p>processing login...</p>
+  return <p>processing login...</p>;
 }
