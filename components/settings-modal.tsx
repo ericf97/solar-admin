@@ -26,7 +26,7 @@ interface SettingsModalProps {
 export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const { baseUrl, setBaseUrl } = useApiStore();
   const [environment, setEnvironment] = useState<"local" | "dev" | "prod">(
-    "local"
+    "dev"
   );
   const [localUrl, setLocalUrl] = useState("http://localhost:3000");
 
