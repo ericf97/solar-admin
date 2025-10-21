@@ -106,7 +106,7 @@ export const usePromptInputController = () => {
 };
 
 // Optional variants (do NOT throw). Useful for dual-mode components.
-const optional_usePromptInputController = () => {
+const useOptional_usePromptInputController = () => {
   return useContext(PromptInputContext);
 };
 
@@ -120,7 +120,7 @@ export const useProviderAttachments = () => {
   return ctx;
 };
 
-const optional_useProviderAttachments = () => {
+const useOptional_useProviderAttachments = () => {
   return useContext(ProviderAttachmentsContext);
 };
 
@@ -233,7 +233,7 @@ const LocalAttachmentsContext = createContext<AttachmentsContext | null>(null);
 
 export const usePromptInputAttachments = () => {
   // Dual-mode: prefer provider if present, otherwise use local
-  const provider = optional_useProviderAttachments();
+  const provider = useOptional_useProviderAttachments();
   const local = useContext(LocalAttachmentsContext);
   const context = provider ?? local;
   if (!context) {
@@ -451,7 +451,7 @@ export const PromptInput = ({
   ...props
 }: PromptInputProps) => {
   // Try to use a provider controller if present
-  const controller = optional_usePromptInputController();
+  const controller = useOptional_usePromptInputController();
   const usingProvider = !!controller;
 
   // Refs
@@ -693,6 +693,7 @@ export const PromptInput = ({
 
     // Convert blob URLs to data URLs asynchronously
     Promise.all(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       files.map(async ({ id, ...item }) => {
         if (item.url && item.url.startsWith("blob:")) {
           return {
@@ -726,6 +727,7 @@ export const PromptInput = ({
           }
         }
       } catch (error) {
+        console.log("Error in onSubmit:", error);
         // Don't clear on error - user may want to retry
       }
     });
@@ -783,7 +785,7 @@ export const PromptInputTextarea = ({
   placeholder = "What would you like to know?",
   ...props
 }: PromptInputTextareaProps) => {
-  const controller = optional_usePromptInputController();
+  const controller = useOptional_usePromptInputController();
   const attachments = usePromptInputAttachments();
 
   const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = e => {
@@ -975,14 +977,15 @@ interface SpeechRecognition extends EventTarget {
   lang: string;
   start(): void;
   stop(): void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onstart: ((this: SpeechRecognition, ev: Event) => any) | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onend: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onresult:
-    | ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any)
-    | null;
-  onerror:
-    | ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any)
-    | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onresult: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
+  onerror: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any) | null;
 }
 
 interface SpeechRecognitionEvent extends Event {
@@ -1179,4 +1182,3 @@ export const PromptInputModelSelectValue = ({
 }: PromptInputModelSelectValueProps) => (
   <SelectValue className={cn(className)} {...props} />
 );
-

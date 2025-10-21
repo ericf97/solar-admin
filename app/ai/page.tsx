@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import dynamic from "next/dynamic";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/data-table";
 import { Layout } from "@/components/layout";
@@ -51,7 +52,14 @@ import { cn } from "@/lib/utils";
 import { useIntentsStore } from "@/store/intents-store";
 import { useAgentsStore } from "@/store/agents-store";
 import { useDatasetsStore } from "@/store/datasets-store";
-import { UnityChatWindowLLM } from "@/components/unity-chat-window-llm";
+
+const UnityChatWindowLLM = dynamic(
+  () =>
+    import("@/components/unity-chat-window-llm").then(
+      m => m.UnityChatWindowLLM
+    ),
+  { ssr: false }
+);
 
 const intentColumns: ColumnDef<IIntent>[] = [
   {

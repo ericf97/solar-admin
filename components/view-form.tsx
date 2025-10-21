@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -15,6 +17,10 @@ export function ViewForm({ initialData, onSubmit, onCancel }: PortalFormProps) {
 
   const handleCopy = async () => {
     try {
+      if (typeof navigator === "undefined" || !navigator.clipboard) {
+        alert("Clipboard API not available");
+        return;
+      }
       await navigator.clipboard.writeText(
         JSON.stringify(form.getValues(), null, 2)
       );
