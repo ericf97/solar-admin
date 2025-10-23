@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import dynamic from "next/dynamic";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/data-table";
@@ -233,15 +233,17 @@ type TabConfig = {
   };
 };
 
-export default function AIPage() {
+function AIPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   const tabParam = searchParams.get("tab") as keyof TabConfig | null;
   const viewParam = searchParams.get("view");
   const idParam = searchParams.get("id");
 
-  const [activeTab, setActiveTab] = useState<keyof TabConfig>(tabParam || "agents");
+  const [activeTab, setActiveTab] = useState<keyof TabConfig>(
+    tabParam || "agents"
+  );
 
   const intents = useIntentsStore(state => state.items);
   const agents = useAgentsStore(state => state.items);
@@ -280,7 +282,11 @@ export default function AIPage() {
     }
   }, [viewParam, idParam, activeTab, tabParam]);
 
-  const loadItemFromUrl = async (tab: keyof TabConfig, id: string, editing: boolean) => {
+  const loadItemFromUrl = async (
+    tab: keyof TabConfig,
+    id: string,
+    editing: boolean
+  ) => {
     try {
       if (tab === "intents") {
         const fullIntent = await intentsService.getIntent(id);
@@ -867,6 +873,28 @@ export default function AIPage() {
         )}
       </div>
     </Layout>
+  );
+}
+
+export default function AIPage() {
+  return (
+    <Suspense
+      fallback={
+        <Layout>
+          <div className="h-full flex items-center justify-center">
+            <div className="space-y-3 w-full max-w-4xl px-4">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+            </div>
+          </div>
+        </Layout>
+      }
+    >
+      <AIPageContent />
+    </Suspense>
   );
 }
 
