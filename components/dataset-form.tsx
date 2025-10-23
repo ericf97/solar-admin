@@ -42,12 +42,14 @@ interface DatasetFormProps {
   initialData?: IDataset;
   onSubmit: (data: DatasetFormData) => Promise<void>;
   mode?: "view" | "edit" | "create";
+  formId?: string;
 }
 
 export function DatasetForm({
   initialData,
   onSubmit,
   mode = "create",
+  formId = "dataset-form",
 }: DatasetFormProps) {
   const isViewMode = mode === "view";
   const isEditing = mode === "edit" || mode === "create";
@@ -131,6 +133,7 @@ export function DatasetForm({
   return (
     <Form {...form}>
       <form
+        id={formId}
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-6"
       >

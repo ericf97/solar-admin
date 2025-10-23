@@ -96,6 +96,7 @@ interface AgentFormProps {
   initialData?: IAgent;
   onSubmit: (data: AgentSubmitData) => Promise<void>;
   mode?: "view" | "edit" | "create";
+  formId?: string;
 }
 
 interface AvailableTag {
@@ -153,6 +154,7 @@ export function AgentForm({
   initialData,
   onSubmit,
   mode = "create",
+  formId = "agent-form",
 }: AgentFormProps) {
   const isViewMode = mode === "view";
   const isEditing = mode === "edit" || mode === "create";
@@ -428,7 +430,11 @@ export function AgentForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+      <form
+        id={formId}
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="space-y-8"
+      >
         {validationError && (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />

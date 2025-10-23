@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 interface SplitViewProps {
@@ -16,7 +16,19 @@ export function SplitView({
   children,
   title,
   actions,
+  onClose,
 }: SplitViewProps) {
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [isOpen, onClose]);
+
   return (
     <div
       className={cn(
@@ -38,4 +50,3 @@ export function SplitView({
     </div>
   );
 }
-

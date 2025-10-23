@@ -52,6 +52,7 @@ import { cn } from "@/lib/utils";
 import { useIntentsStore } from "@/store/intents-store";
 import { useAgentsStore } from "@/store/agents-store";
 import { useDatasetsStore } from "@/store/datasets-store";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const UnityChatWindowLLM = dynamic(
   () =>
@@ -233,7 +234,14 @@ type TabConfig = {
 };
 
 export default function AIPage() {
-  const [activeTab, setActiveTab] = useState<keyof TabConfig>("agents");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  const tabParam = searchParams.get("tab") as keyof TabConfig | null;
+  const viewParam = searchParams.get("view");
+  const idParam = searchParams.get("id");
+
+  const [activeTab, setActiveTab] = useState<keyof TabConfig>(tabParam || "agents");
 
   const intents = useIntentsStore(state => state.items);
   const agents = useAgentsStore(state => state.items);
@@ -265,6 +273,48 @@ export default function AIPage() {
   const debouncedSearch = useDebouncedCallback((value: string) => {
     setSearchTerm(value);
   }, 300);
+
+  useEffect(() => {
+    if (viewParam && idParam && tabParam === activeTab) {
+      loadItemFromUrl(activeTab, idParam, viewParam === "edit");
+    }
+  }, [viewParam, idParam, activeTab, tabParam]);
+
+  const loadItemFromUrl = async (tab: keyof TabConfig, id: string, editing: boolean) => {
+    try {
+      if (tab === "intents") {
+        const fullIntent = await intentsService.getIntent(id);
+        setSelectedIntent(fullIntent);
+        setSelectedAgent(null);
+        setSelectedDataset(null);
+      } else if (tab === "agents") {
+        const fullAgent = await agentsService.getAgent(id);
+        setSelectedAgent(fullAgent);
+        setSelectedIntent(null);
+        setSelectedDataset(null);
+      } else if (tab === "datasets") {
+        const fullDataset = await datasetsService.getDataset(id);
+        setSelectedDataset(fullDataset);
+        setSelectedIntent(null);
+        setSelectedAgent(null);
+      }
+      setIsSplitViewOpen(true);
+      setIsEditing(editing);
+    } catch (error) {
+      console.error("Error loading item from URL:", error);
+      handleCloseSplitView();
+    }
+  };
+
+  const updateUrl = (tab: keyof TabConfig, view?: string, id?: string) => {
+    const params = new URLSearchParams();
+    params.set("tab", tab);
+    if (view && id) {
+      params.set("view", view);
+      params.set("id", id);
+    }
+    router.push(`/ai?${params.toString()}`, { scroll: false });
+  };
 
   const loadData = useCallback(async () => {
     const filter = createFilterString(searchTerm, activeTab);
@@ -333,6 +383,8 @@ export default function AIPage() {
       setSelectedAgent(null);
       setSelectedDataset(null);
       setIsSplitViewOpen(true);
+      setIsEditing(false);
+      updateUrl("intents", "view", intent.id);
     } catch (error) {
       console.error("Error loading intent:", error);
     }
@@ -373,6 +425,8 @@ export default function AIPage() {
       setSelectedIntent(null);
       setSelectedDataset(null);
       setIsSplitViewOpen(true);
+      setIsEditing(false);
+      updateUrl("agents", "view", agent.id);
     } catch (error) {
       console.error("Error loading agent:", error);
     }
@@ -385,6 +439,8 @@ export default function AIPage() {
       setSelectedIntent(null);
       setSelectedAgent(null);
       setIsSplitViewOpen(true);
+      setIsEditing(false);
+      updateUrl("datasets", "view", dataset.id);
     } catch (error) {
       console.error("Error loading dataset:", error);
     }
@@ -396,15 +452,30 @@ export default function AIPage() {
     setSelectedAgent(null);
     setSelectedDataset(null);
     setIsEditing(false);
+    updateUrl(activeTab);
   };
 
   const handleEdit = () => {
     setIsEditing(true);
+    if (selectedIntent) {
+      updateUrl("intents", "edit", selectedIntent.id);
+    } else if (selectedAgent) {
+      updateUrl("agents", "edit", selectedAgent.id);
+    } else if (selectedDataset) {
+      updateUrl("datasets", "edit", selectedDataset.id);
+    }
   };
 
   const handleCancelEdit = () => {
     if (isEditing) {
       setIsEditing(false);
+      if (selectedIntent) {
+        updateUrl("intents", "view", selectedIntent.id);
+      } else if (selectedAgent) {
+        updateUrl("agents", "view", selectedAgent.id);
+      } else if (selectedDataset) {
+        updateUrl("datasets", "view", selectedDataset.id);
+      }
     } else {
       handleCloseSplitView();
     }
@@ -638,6 +709,17 @@ export default function AIPage() {
     setChatAgentId(newAgentId);
   };
 
+  const handleTabChange = (value: string) => {
+    const newTab = value as keyof TabConfig;
+    setActiveTab(newTab);
+    setIsSplitViewOpen(false);
+    setSelectedIntent(null);
+    setSelectedAgent(null);
+    setSelectedDataset(null);
+    setIsEditing(false);
+    updateUrl(newTab);
+  };
+
   return (
     <Layout>
       <div className="h-full flex flex-col overflow-hidden">
@@ -652,7 +734,7 @@ export default function AIPage() {
           >
             <Tabs
               value={activeTab}
-              onValueChange={value => setActiveTab(value as keyof TabConfig)}
+              onValueChange={handleTabChange}
               className="w-full flex flex-col flex-1 overflow-hidden"
             >
               <div className="flex items-center justify-between gap-2 sm:gap-4 mb-4 flex-shrink-0 flex-wrap sm:flex-nowrap">
@@ -693,13 +775,6 @@ export default function AIPage() {
                     />
                   </div>
                   <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
-                    {activeTab === "intents" && (
-                      <Link href="/ai/creator/intents" passHref>
-                        <Button variant="outline" size="icon">
-                          <Sparkles className="h-6 w-6" />
-                        </Button>
-                      </Link>
-                    )}
                     <Link href={currentTabConfig.addLink} passHref>
                       <Button variant="outline" size="icon">
                         <Plus className="h-6 w-6" />

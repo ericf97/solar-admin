@@ -109,7 +109,7 @@ export function IntentForm({
   initialData,
   onSubmit,
   mode = "create",
-  formId,
+  formId = "intent-form",
 }: IntentFormProps) {
   const isViewMode = mode === "view";
   const isEditing = mode === "edit" || mode === "create";
